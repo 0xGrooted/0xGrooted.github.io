@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Missions: Writeups by 0xGrooted</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* =================== GLOBAL STYLES =================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00ff41;
+            --secondary-color: #ff0080;
+            --tertiary-color: #00d4ff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --glow-color: rgba(0, 255, 65, 0.5);
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* =================== ANIMATED BACKGROUND =================== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        /* =================== NAVIGATION =================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-color);
+            text-shadow: 0 0 5px var(--glow-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* =================== HERO SECTION =================== */
+        .hero {
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .hero-content h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--tertiary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        @keyframes glow {
+            to { text-shadow: 0 0 20px var(--glow-color); }
+        }
+
+        /* =================== FILTER SECTION =================== */
+        .filters {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px var(--glow-color);
+        }
+
+        /* =================== CTF GRID =================== */
+        .ctf-section {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .ctf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .ctf-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ctf-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .ctf-card:hover::before {
+            opacity: 1;
+            animation: shine 1.5s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .ctf-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 65, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .ctf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ctf-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .ctf-platform {
+            background: linear-gradient(45deg, var(--secondary-color), var(--tertiary-color));
+            color: var(--text-primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .ctf-difficulty {
+            margin-bottom: 1rem;
+        }
+
+        .difficulty-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .difficulty-easy {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .difficulty-medium {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+            border: 1px solid #ffa500;
+        }
+
+        .difficulty-hard {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+
+        .ctf-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .ctf-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--primary-color);
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .ctf-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* =================== WRITEUP MODAL =================== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--bg-dark);
+            margin: 2% auto;
+            padding: 0;
+            border: 1px solid var(--primary-color);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--tertiary-color));
+            color: var(--bg-dark);
+            padding: 1.5rem 2rem;
+            border-radius: 15px 15px 0 0;
+            position: sticky;
+            top: 0;
+        }
+
+        .modal-header h2 {
+            font-family: 'Orbitron', monospace;
+            margin: 0;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            color: var(--bg-dark);
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--text-secondary);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .writeup-content {
+            line-height: 1.8;
+        }
+
+        .writeup-content h3 {
+            color: var(--primary-color);
+            font-family: 'Orbitron', monospace;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .writeup-content p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .writeup-content pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            color: var(--primary-color);
+        }
+
+        .writeup-content code {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--primary-color);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .writeup-content ul {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .writeup-content li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =================== RESPONSIVE DESIGN =================== */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .ctf-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">0xGrooted</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#" class="active">CTF Writeups</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="https://github.com/0xGrooted" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>CTF Missions</h1>
+            <p class="subtitle">Battle-tested writeups from the trenches of ethical hacking</p>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">All Challenges</button>
+        <button class="filter-btn" data-filter="web">Web Exploitation</button>
+        <button class="filter-btn" data-filter="pwn">Binary Exploitation</button>
+        <button class="filter-btn" data-filter="crypto">Cryptography</button>
+        <button class="filter-btn" data-filter="forensics">Digital Forensics</button>
+        <button class="filter-btn" data-filter="osint">OSINT</button>
+    </div>
+
+    <!-- CTF Grid -->
+    <section class="ctf-section">
+        <div class="ctf-grid" id="ctfGrid">
+            <!-- CTF cards will be generated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Writeup Modal -->
+    <div id="writeupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="writeupContent" class="writeup-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =================== CTF DATA ===================
+        const ctfData = [
+            {
+                id: 1,
+                title: "SQL Injection Bypass",
+                platform: "TryHackMe",
+                difficulty: "medium",
+                tags: ["web", "sql", "authentication"],
+                description: "A classic SQL injection challenge with WAF bypass techniques and authentication circumvention.",
+                date: "2024-11-15",
+                points: 250,
+                category: "web",
+                writeup: `
+                    <h3>Challenge Overview</h3>
+                    <p>This challenge presented a login form with SQL injection vulnerability, but it had a Web Application Firewall (WAF) that blocked common injection attempts.</p>
+                    
+                    <h3>Reconnaissance</h3>
+                    <p>Initial testing revealed that the application was filtering common SQL injection keywords like <code>UNION</code>, <code>SELECT</code>, and <code>OR</code>.</p>
+                    
+                    <h3>Exploitation</h3>
+                    <p>The key was to bypass the WAF using less common SQL syntax. I used the following payload:</p>
+                    <pre><code>' OR 1=1 -- </code></pre>
+                    <p>This payload successfully bypassed the WAF and allowed me to log in as an admin.</p>
+                    <h3>Post-Exploitation</h3>
+                    <p>After gaining access, I was able to retrieve sensitive data from the database, including user credentials and application logs.</p>
+                    <h3>Conclusion</h3>
+                    <p>This challenge reinforced the importance of understanding how WAFs work and how to bypass them using unconventional methods.</p>
+                `
+            },
+            {
+                id: 2,
+                title: "ROP Chain Exploit",
+                platform: "HackTheBox",
+                difficulty: "hard",
+                tags: ["pwn", "rop", "binary"],
+                description: "A binary exploitation challenge requiring Return-Oriented Programming to gain shell access.",
+                date: "2025-02-10",
+                points: 400,
+                category: "pwn",
+                writeup: `
+                    <h3>Challenge Overview</h3>
+                    <p>This binary had stack protections enabled but was vulnerable to buffer overflow. The goal was to craft a ROP chain to execute <code>system('/bin/sh')</code>.</p>
+                    <h3>Exploitation</h3>
+                    <p>After identifying the buffer size and leaking a libc address, I built the following ROP chain:</p>
+                    <pre><code>payload = b"A" * offset + p64(pop_rdi) + p64(bin_sh) + p64(system)</code></pre>
+                    <p>Successfully popped a shell and captured the flag.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "RSA Weak Key Recovery",
+                platform: "CryptoHack",
+                difficulty: "medium",
+                tags: ["crypto", "rsa", "math"],
+                description: "Recovering plaintext from an RSA-encrypted message using weak key parameters.",
+                date: "2025-03-05",
+                points: 300,
+                category: "crypto",
+                writeup: `
+                    <h3>Challenge Overview</h3>
+                    <p>The challenge provided an RSA public key with a small exponent and modulus. Factoring the modulus was trivial.</p>
+                    <h3>Solution</h3>
+                    <pre><code>n = 3233
+e = 17
+c = 855
+# Factor n, compute d, decrypt c</code></pre>
+                    <p>Recovered the plaintext and explained the math behind the attack.</p>
+                `
+            },
+            {
+                id: 4,
+                title: "Stego Image Extraction",
+                platform: "ForensicsLab",
+                difficulty: "easy",
+                tags: ["forensics", "stego", "image"],
+                description: "Extracting hidden data from a PNG image using steganography tools.",
+                date: "2025-01-22",
+                points: 150,
+                category: "forensics",
+                writeup: `
+                    <h3>Challenge Overview</h3>
+                    <p>A PNG image contained a hidden flag using LSB steganography.</p>
+                    <h3>Solution</h3>
+                    <pre><code>steghide extract -sf challenge.png</code></pre>
+                    <p>Flag extracted successfully.</p>
+                `
+            },
+            {
+                id: 5,
+                title: "OSINT: Social Media Sleuth",
+                platform: "CTFTime",
+                difficulty: "easy",
+                tags: ["osint", "recon"],
+                description: "Finding a flag hidden in a series of social media posts.",
+                date: "2025-04-12",
+                points: 100,
+                category: "osint",
+                writeup: `
+                    <h3>Challenge Overview</h3>
+                    <p>Given a username, I traced their digital footprint across multiple platforms and found the flag in a Twitter image metadata.</p>
+                `
+            }
+        ];
+
+        // =================== RENDER CTF CARDS ===================
+        function renderCTFCards(filter = "all") {
+            const grid = document.getElementById('ctfGrid');
+            grid.innerHTML = '';
+            let filtered = ctfData;
+            if (filter !== "all") {
+                filtered = ctfData.filter(c => c.category === filter);
+            }
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="color:var(--text-secondary);text-align:center;">No challenges found for this category.</p>`;
+                return;
+            }
+            filtered.forEach(card => {
+                grid.innerHTML += `
+                <div class="ctf-card" tabindex="0" data-id="${card.id}">
+                    <div class="ctf-header">
+                        <div>
+                            <div class="ctf-title">${card.title}</div>
+                            <span class="ctf-platform">${card.platform}</span>
+                        </div>
+                        <div class="ctf-difficulty">
+                            <span class="difficulty-badge difficulty-${card.difficulty}">${card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1)}</span>
+                        </div>
+                    </div>
+                    <div class="ctf-description">${card.description}</div>
+                    <div class="ctf-tags">
+                        ${card.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="ctf-meta">
+                        <span>${card.date}</span>
+                        <span>${card.points} pts</span>
+                    </div>
+                </div>
+                `;
+            });
+        }
+
+        // =================== FILTER BUTTONS ===================
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderCTFCards(this.dataset.filter);
+            });
+        });
+
+        // =================== MODAL LOGIC ===================
+        const modal = document.getElementById('writeupModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const writeupContent = document.getElementById('writeupContent');
+        const closeBtn = document.querySelector('.close');
+
+        document.getElementById('ctfGrid').addEventListener('click', function(e) {
+            let card = e.target.closest('.ctf-card');
+            if (!card) return;
+            let id = parseInt(card.dataset.id);
+            let data = ctfData.find(c => c.id === id);
+            if (!data) return;
+            modalTitle.innerText = data.title + " (" + data.platform + ")";
+            writeupContent.innerHTML = data.writeup;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+
+        document.getElementById('ctfGrid').addEventListener('keydown', function(e) {
+            if (e.key === "Enter" || e.key === " ") {
+                let card = e.target.closest('.ctf-card');
+                if (!card) return;
+                let id = parseInt(card.dataset.id);
+                let data = ctfData.find(c => c.id === id);
+                if (!data) return;
+                modalTitle.innerText = data.title + " (" + data.platform + ")";
+                writeupContent.innerHTML = data.writeup;
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        });
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        };
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        };
+        window.onkeydown = function(event) {
+            if (event.key === "Escape") {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        };
+
+        // =================== PARTICLE BACKGROUND ===================
+        function createParticles() {
+            const bg = document.getElementById('bgAnimation');
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (4 + Math.random() * 4) + 's';
+                bg.appendChild(p);
+            }
+        }
+
+        // =================== INIT ===================
+        renderCTFCards();
+        createParticles();
+    </script>
+</body>
+</html>
