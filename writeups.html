@@ -527,12 +527,12 @@
                 id: 1,
                 title: "Network Enumeration with Nmap",
                 platform: "HackTheBox",
-                difficulty: "Easy",
+                difficulty: "easy",
                 tags: ["Nmap", "Enumeration", "Active Recon"],
                 description: "As part of CPTS, scanning netoworks in a CTF style",
                 date: "03/08/2025",
-                points: 250,
-                category: "Active Reconnaissance",
+                points: 100,
+                category: "Enumeration",
                 writeup: `
                     <h3>Challenge Overview</h3>
                     <p>This Module Presented challenges which required using nmap to identify open ports and use specific scripts to find flags hidden in running services.</p>
@@ -549,10 +549,33 @@
                     MAC Address: DE:AD:00:00:BE:EF
                     Nmap done: 1 IP address (1 host up) scanned in 0.11 seconds </code></pre>
                     
-                    <h3>Challenge</h3>
+                    <h3>Explanation</h3>
                     <p>Based on the last result, find out which operating system it belongs to. Submit the name of the operating system as result.</p>
                     <p>Looking at the scan from above there is not a lot of pointers to go of. However going of the pointer referenced about ICMP echo Requests it mut be something to do with that... </p>
                     <p>So if we have a look it took 0.0152seconds to receive a response. Google tells us this is the common response time for windows machines :)</p>
+
+                    <h3><b>Answer: Windows</b></h3>
+                    <br></br>
+
+                    <h3>Host and Port Scanning</h3>
+                    <p>There is 6 different lists</p>
+                    <p>To scan for host discovery we use the following:</p>
+                    <pre><code>0xgrooted@htb[/htb]$ sudo nmap 10.129.2.18 -sn -oA host -PE --packet-trace --disable-arp-ping </code></pre>
+                    <pre><code>Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-15 00:12 CEST
+                    SENT (0.0107s) ICMP [10.10.14.2 > 10.129.2.18 Echo request (type=8/code=0) id=13607 seq=0] IP [ttl=255 id=23541 iplen=28 ]
+                    RCVD (0.0152s) ICMP [10.129.2.18 > 10.10.14.2 Echo reply (type=0/code=0) id=13607 seq=0] IP [ttl=128 id=40622 iplen=28 ]
+                    Nmap scan report for 10.129.2.18
+                    Host is up (0.086s latency).
+                    MAC Address: DE:AD:00:00:BE:EF
+                    Nmap done: 1 IP address (1 host up) scanned in 0.11 seconds </code></pre>
+                    
+                    <h3>Explanation</h3>
+                    <p>Based on the last result, find out which operating system it belongs to. Submit the name of the operating system as result.</p>
+                    <p>Looking at the scan from above there is not a lot of pointers to go of. However going of the pointer referenced about ICMP echo Requests it mut be something to do with that... </p>
+                    <p>So if we have a look it took 0.0152seconds to receive a response. Google tells us this is the common response time for windows machines :)</p>
+
+                    <h3><b>Answer: Windows</b></h3>
+                    <br></br>
                 `
             },
             {
