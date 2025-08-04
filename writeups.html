@@ -518,10 +518,10 @@
             const allWriteups = [
               {
                 "id": 1,
-                "title": "Hacking with SQL Injection",
-                "category": "web",
-                "summary": "A detailed walkthrough on how to exploit a basic SQL injection vulnerability to bypass authentication and dump the database.",
-                "details": "### Introduction\nThis writeup covers a classic SQL injection vulnerability found in a login form. We will go through the steps of identifying the vulnerability, bypassing the login, and then extracting data from the database.\n\n### Step 1: Identifying the Vulnerability\nWe first try to enter a single quote `'` in the username field. If the application returns a generic error, it's a good sign that the query is failing due to an unescaped character. The backend query might look something like this: `SELECT * FROM users WHERE username = 'user' AND password = 'password'`. When we input `'`, the query becomes `SELECT * FROM users WHERE username = ''''...` which causes a syntax error.\n\n### Step 2: Bypassing the Login\nTo bypass the login, we can use a payload like `admin'--`. The double hyphen `--` comments out the rest of the SQL query. The final query becomes `SELECT * FROM users WHERE username = 'admin'--' AND password = 'password'`. This query is valid and will likely return the row for the 'admin' user, logging us in.\n\n### Step 3: Extracting Data\nTo extract data, we can use a UNION-based attack. We'll need to determine the number of columns in the original query first. We can do this with `ORDER BY`. Once we know the column count, we can use `UNION SELECT` to retrieve data from other tables, for example: `admin' UNION SELECT 1, database(), version()--`."
+                "title": "Security Monitoring & SIEM Fundamentals",
+                "category": "SIEM",
+                "summary": "A detailed walkthrough on how to use Elastic for SIEM Visualization",
+                "details": "### Introduction\nThis Writeup Covers the easy HackTheBox module Security Monitoring & SIEM Fundamentals. This Module tests the ability to detect anomalies in logs across different areas like failed logons, RDP and User Groups\n\n### SIEM Definition & Fundamentals: A basic summary of SIEM\nSIEMs Offer solutions that merge the management of security data with supervision of the security events. \nLog Aggregation & Normalization - Utilizing SIEM log consolidation allows for organisations to recognise patterns, tendencies + ireggularties etc\n\n\n### Step 3: Extracting Data\nTo extract data, we can use a UNION-based attack. We'll need to determine the number of columns in the original query first. We can do this with `ORDER BY`. Once we know the column count, we can use `UNION SELECT` to retrieve data from other tables, for example: `admin' UNION SELECT 1, database(), version()--`."
               },
               {
                 "id": 2,
