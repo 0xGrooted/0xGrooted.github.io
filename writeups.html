@@ -1,12 +1,13 @@
+````html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTF Missions: Writeups by 0xGrooted</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>0xGrooted - CTF Writeups</title>
     <style>
-        /* =================== GLOBAL STYLES =================== */
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,25 +15,35 @@
         }
 
         :root {
-            --primary-color: #00ff41;
-            --secondary-color: #ff0080;
-            --tertiary-color: #00d4ff;
-            --bg-dark: #0a0a0a;
-            --bg-darker: #050505;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-glass: rgba(22, 33, 62, 0.4);
             --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --glow-color: rgba(0, 255, 65, 0.5);
+            --text-secondary: #b8c5d6;
+            --text-muted: #6b7894;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #0f3460;
+            --accent-green: #00ff88;
+            --accent-purple: #6c5ce7;
+            --accent-red: #fd79a8;
+            --accent-yellow: #fdcb6e;
+            --border-glow: rgba(0, 212, 255, 0.3);
+            --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #6c5ce7 50%, #00ff88 100%);
+            --gradient-card: linear-gradient(145deg, rgba(22, 33, 62, 0.8), rgba(15, 52, 96, 0.4));
+            --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.1);
         }
 
         body {
-            font-family: 'Fira Code', monospace;
-            background: var(--bg-dark);
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
             color: var(--text-primary);
-            overflow-x: hidden;
             line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* =================== ANIMATED BACKGROUND =================== */
+        /* Animated background */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -41,729 +52,604 @@
             height: 100%;
             z-index: -1;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(108, 92, 231, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
         }
 
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+        @keyframes bgFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
-            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        /* Matrix rain effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.05;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 98px,
+                rgba(0, 212, 255, 0.03) 100px
+            );
+            animation: matrixScroll 20s linear infinite;
         }
 
-        /* =================== NAVIGATION =================== */
-        .navbar {
+        @keyframes matrixScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(100px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Enhanced Header */
+        header {
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(10, 10, 10, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glow);
             z-index: 1000;
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow-glow);
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 2rem;
+            padding: 1rem 0;
         }
 
         .logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            color: var(--primary-color);
-            text-shadow: 0 0 10px var(--glow-color);
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            position: relative;
+            letter-spacing: -0.02em;
+        }
+
+        .logo::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
             transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
             position: relative;
+            padding: 0.5rem 0;
+            font-weight: 500;
         }
 
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--primary-color);
-            text-shadow: 0 0 5px var(--glow-color);
-        }
-
-        .nav-links a::after {
+        .nav-links a::before {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--primary-color);
+            background: var(--gradient-primary);
             transition: width 0.3s ease;
         }
 
-        .nav-links a:hover::after,
-        .nav-links a.active::after {
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
             width: 100%;
         }
 
-        /* =================== HERO SECTION =================== */
-        .hero {
-            height: 50vh;
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-primary);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Status indicator */
+        .status-indicator {
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            margin-top: 80px;
+            gap: 0.5rem;
+            color: var(--accent-green);
+            font-size: 0.8rem;
         }
 
-        .hero-content h1 {
-            font-family: 'Orbitron', monospace;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Main content */
+        main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 4rem;
+        }
+
+        .section-header h2 {
             font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-color), var(--tertiary-color));
+            font-weight: 700;
+            background: var(--gradient-primary);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-            animation: glow 2s ease-in-out infinite alternate;
         }
 
-        .hero-content .subtitle {
-            font-size: 1.2rem;
+        .section-header p {
+            font-size: 1.1rem;
             color: var(--text-secondary);
+            max-width: 600px;
+            margin: 1rem auto 0;
+        }
+
+        /* Filter buttons */
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        @keyframes glow {
-            to { text-shadow: 0 0 20px var(--glow-color); }
-        }
-
-        /* =================== FILTER SECTION =================== */
-        .filters {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
         .filter-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 255, 65, 0.3);
+            background: var(--bg-card);
             color: var(--text-secondary);
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--border-glow);
+            border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Fira Code', monospace;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .filter-btn:hover,
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gradient-primary);
+            color: var(--bg-primary);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
         .filter-btn.active {
-            background: var(--primary-color);
-            color: var(--bg-dark);
-            border-color: var(--primary-color);
-            box-shadow: 0 5px 15px var(--glow-color);
+            animation: btnPulse 1s infinite alternate;
         }
 
-        /* =================== CTF GRID =================== */
-        .ctf-section {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+        @keyframes btnPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
         }
-
-        .ctf-grid {
+        
+        /* Writeups Grid */
+        .writeups-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
 
-        .ctf-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            border-radius: 15px;
+        .writeup-card {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
             padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
             cursor: pointer;
-            transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .ctf-card::before {
+        .writeup-card::after {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(0, 255, 65, 0.1), transparent);
-            transform: rotate(45deg);
-            transition: all 0.5s ease;
+            bottom: 1rem;
+            right: 1rem;
+            width: 20px;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff88' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'%3E%3C/path%3E%3Cpolyline points='15 3 21 3 21 9'%3E%3C/polyline%3E%3Cline x1='10' y1='14' x2='21' y2='3'%3E%3C/line%3E%3C/svg%3E");
+            background-size: contain;
             opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .ctf-card:hover::before {
+        .writeup-card:hover::after {
             opacity: 1;
-            animation: shine 1.5s ease-in-out;
         }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        .writeup-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 45px rgba(0, 212, 255, 0.2), 0 0 40px var(--accent-primary);
         }
 
-        .ctf-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 255, 65, 0.2);
-            border-color: var(--primary-color);
-        }
-
-        .ctf-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        .writeup-card h3 {
+            font-size: 1.5rem;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
 
-        .ctf-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.3rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .ctf-platform {
-            background: linear-gradient(45deg, var(--secondary-color), var(--tertiary-color));
-            color: var(--text-primary);
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .ctf-difficulty {
-            margin-bottom: 1rem;
-        }
-
-        .difficulty-badge {
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .difficulty-easy {
-            background: rgba(0, 255, 0, 0.2);
-            color: #00ff00;
-            border: 1px solid #00ff00;
-        }
-
-        .difficulty-medium {
-            background: rgba(255, 165, 0, 0.2);
-            color: #ffa500;
-            border: 1px solid #ffa500;
-        }
-
-        .difficulty-hard {
-            background: rgba(255, 0, 0, 0.2);
-            color: #ff0000;
-            border: 1px solid #ff0000;
-        }
-
-        .ctf-description {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
-        .ctf-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .tag {
-            background: rgba(0, 255, 65, 0.1);
-            color: var(--primary-color);
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(0, 255, 65, 0.3);
-        }
-
-        .ctf-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .writeup-card .category {
             font-size: 0.9rem;
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            margin-bottom: 1rem;
         }
 
-        /* =================== WRITEUP MODAL =================== */
+        .writeup-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Modal for detailed writeups */
         .modal {
-            display: none;
+            display: none; 
             position: fixed;
-            z-index: 2000;
+            z-index: 1001; 
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding-top: 5vh;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
-            background: var(--bg-dark);
-            margin: 2% auto;
-            padding: 0;
-            border: 1px solid var(--primary-color);
-            border-radius: 15px;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            margin: auto;
+            padding: 2rem;
+            max-width: 900px;
             width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
+            box-shadow: 0 15px 45px rgba(0, 212, 255, 0.2);
             position: relative;
-            animation: modalSlideIn 0.3s ease;
+            animation: modalSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .modal-header {
-            background: linear-gradient(45deg, var(--primary-color), var(--tertiary-color));
-            color: var(--bg-dark);
-            padding: 1.5rem 2rem;
-            border-radius: 15px 15px 0 0;
-            position: sticky;
-            top: 0;
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
         }
 
-        .modal-header h2 {
-            font-family: 'Orbitron', monospace;
-            margin: 0;
+        .modal-content h2 {
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
         }
 
-        .close {
+        .modal-content .modal-category {
+            font-size: 1rem;
+            color: var(--accent-green);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content h4 {
+            font-size: 1.25rem;
+            color: var(--accent-yellow);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .modal-content pre {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--text-muted);
+            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .modal-content code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-yellow);
+        }
+
+        .close-btn {
+            color: var(--text-secondary);
             position: absolute;
-            right: 1rem;
             top: 1rem;
-            color: var(--bg-dark);
+            right: 1.5rem;
             font-size: 2rem;
             font-weight: bold;
             cursor: pointer;
             transition: color 0.3s ease;
         }
 
-        .close:hover {
-            color: var(--text-secondary);
+        .close-btn:hover {
+            color: var(--accent-red);
         }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .writeup-content {
-            line-height: 1.8;
-        }
-
-        .writeup-content h3 {
-            color: var(--primary-color);
-            font-family: 'Orbitron', monospace;
-            margin: 2rem 0 1rem 0;
-            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-            padding-bottom: 0.5rem;
-        }
-
-        .writeup-content p {
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
-        }
-
-        .writeup-content pre {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            border-radius: 8px;
-            padding: 1rem;
-            overflow-x: auto;
-            margin: 1rem 0;
-            color: var(--primary-color);
-        }
-
-        .writeup-content code {
-            background: rgba(0, 255, 65, 0.1);
-            color: var(--primary-color);
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'Fira Code', monospace;
-        }
-
-        .writeup-content ul {
-            margin-left: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .writeup-content li {
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        @keyframes modalSlideIn {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* =================== RESPONSIVE DESIGN =================== */
+        
         @media (max-width: 768px) {
-            .nav-container {
-                padding: 1rem;
-            }
-
             .nav-links {
-                gap: 1rem;
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 15, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 2rem;
+                border-top: 1px solid var(--border-glow);
+                animation: slideDown 0.3s ease-out;
             }
 
-            .hero-content h1 {
-                font-size: 2rem;
+            .nav-links.active {
+                display: flex;
             }
 
-            .ctf-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 5% auto;
-            }
-
-            .modal-body {
-                padding: 1rem;
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
             }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="bg-animation" id="bgAnimation"></div>
+    <div class="bg-animation"></div>
+    <div class="matrix-bg"></div>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">0xGrooted</div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#" class="active">CTF Writeups</a></li>
-                <li><a href="index.html#about">About</a></li>
-                <li><a href="https://github.com/0xGrooted" target="_blank">GitHub</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>CTF Missions</h1>
-            <p class="subtitle">Battle-tested writeups from the trenches of ethical hacking</p>
-        </div>
-    </section>
-
-    <!-- Filter Section -->
-    <div class="filters">
-        <button class="filter-btn active" data-filter="all">All Challenges</button>
-        <button class="filter-btn" data-filter="web">Web Exploitation</button>
-        <button class="filter-btn" data-filter="pwn">Binary Exploitation</button>
-        <button class="filter-btn" data-filter="crypto">Cryptography</button>
-        <button class="filter-btn" data-filter="forensics">Digital Forensics</button>
-        <button class="filter-btn" data-filter="osint">OSINT</button>
-    </div>
-
-    <!-- CTF Grid -->
-    <section class="ctf-section">
-        <div class="ctf-grid" id="ctfGrid">
-            <!-- CTF cards will be generated by JavaScript -->
-        </div>
-    </section>
-
-    <!-- Writeup Modal -->
-    <div id="writeupModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-                <span class="close">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="writeupContent" class="writeup-content"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // =================== CTF DATA ===================
-        const ctfData = [
-            {
-                id: 1,
-                title: "Network Enumeration with Nmap",
-                platform: "HackTheBox",
-                difficulty: "easy",
-                tags: ["Nmap", "Enumeration", "Active Recon"],
-                description: "As part of CPTS, scanning netoworks in a CTF style",
-                date: "03/08/2025",
-                points: 100,
-                category: "Enumeration",
-                writeup: `
-                    <h3>Challenge Overview</h3>
-                    <p>This Module Presented challenges which required using nmap to identify open ports and use specific scripts to find flags hidden in running services.</p>
-                    
-                    <h3>Host Discovery</h3>
-                    <p>The most effective way to find hosts is through ICMP Echo Requests, when scanning it is reccommended to save the scan for documentation</p>
-                    <p>To scan for host discovery we use the following:</p>
-                    <pre><code>0xgrooted@htb[/htb]$ sudo nmap 10.129.2.18 -sn -oA host -PE --packet-trace --disable-arp-ping </code></pre>
-                    <pre><code>Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-15 00:12 CEST
-                    SENT (0.0107s) ICMP [10.10.14.2 > 10.129.2.18 Echo request (type=8/code=0) id=13607 seq=0] IP [ttl=255 id=23541 iplen=28 ]
-                    RCVD (0.0152s) ICMP [10.129.2.18 > 10.10.14.2 Echo reply (type=0/code=0) id=13607 seq=0] IP [ttl=128 id=40622 iplen=28 ]
-                    Nmap scan report for 10.129.2.18
-                    Host is up (0.086s latency).
-                    MAC Address: DE:AD:00:00:BE:EF
-                    Nmap done: 1 IP address (1 host up) scanned in 0.11 seconds </code></pre>
-                    
-                    <h3>Explanation</h3>
-                    <p>Based on the last result, find out which operating system it belongs to. Submit the name of the operating system as result.</p>
-                    <p>Looking at the scan from above there is not a lot of pointers to go of. However going of the pointer referenced about ICMP echo Requests it mut be something to do with that... </p>
-                    <p>So if we have a look it took 0.0152seconds to receive a response. Google tells us this is the common response time for windows machines :)</p>
-
-                    <h3><b>Answer: Windows</b></h3>
-                    <br></br>
-
-                    <h3>Host and Port Scanning</h3>
-                    <p>There is 6 different lists</p>
-                    <p>To scan for host discovery we use the following:</p>
-                    <pre><code>0xgrooted@htb[/htb]$ sudo nmap 10.129.2.18 -sn -oA host -PE --packet-trace --disable-arp-ping </code></pre>
-                    <pre><code>Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-15 00:12 CEST
-                    SENT (0.0107s) ICMP [10.10.14.2 > 10.129.2.18 Echo request (type=8/code=0) id=13607 seq=0] IP [ttl=255 id=23541 iplen=28 ]
-                    RCVD (0.0152s) ICMP [10.129.2.18 > 10.10.14.2 Echo reply (type=0/code=0) id=13607 seq=0] IP [ttl=128 id=40622 iplen=28 ]
-                    Nmap scan report for 10.129.2.18
-                    Host is up (0.086s latency).
-                    MAC Address: DE:AD:00:00:BE:EF
-                    Nmap done: 1 IP address (1 host up) scanned in 0.11 seconds </code></pre>
-                    
-                    <h3>Explanation</h3>
-                    <p>Based on the last result, find out which operating system it belongs to. Submit the name of the operating system as result.</p>
-                    <p>Looking at the scan from above there is not a lot of pointers to go of. However going of the pointer referenced about ICMP echo Requests it mut be something to do with that... </p>
-                    <p>So if we have a look it took 0.0152seconds to receive a response. Google tells us this is the common response time for windows machines :)</p>
-
-                    <h3><b>Answer: Windows</b></h3>
-                    <br></br>
-                `
-            },
-            {
-                id: 2,
-                title: "ROP Chain Exploit",
-                platform: "HackTheBox",
-                difficulty: "hard",
-                tags: ["pwn", "rop", "binary"],
-                description: "A binary exploitation challenge requiring Return-Oriented Programming to gain shell access.",
-                date: "2025-02-10",
-                points: 400,
-                category: "pwn",
-                writeup: `
-                    <h3>Challenge Overview</h3>
-                    <p>This binary had stack protections enabled but was vulnerable to buffer overflow. The goal was to craft a ROP chain to execute <code>system('/bin/sh')</code>.</p>
-                    <h3>Exploitation</h3>
-                    <p>After identifying the buffer size and leaking a libc address, I built the following ROP chain:</p>
-                    <pre><code>payload = b"A" * offset + p64(pop_rdi) + p64(bin_sh) + p64(system)</code></pre>
-                    <p>Successfully popped a shell and captured the flag.</p>
-                `
-            },
-            {
-                id: 3,
-                title: "RSA Weak Key Recovery",
-                platform: "CryptoHack",
-                difficulty: "medium",
-                tags: ["crypto", "rsa", "math"],
-                description: "Recovering plaintext from an RSA-encrypted message using weak key parameters.",
-                date: "2025-03-05",
-                points: 300,
-                category: "crypto",
-                writeup: `
-                    <h3>Challenge Overview</h3>
-                    <p>The challenge provided an RSA public key with a small exponent and modulus. Factoring the modulus was trivial.</p>
-                    <h3>Solution</h3>
-                    <pre><code>n = 3233
-e = 17
-c = 855
-# Factor n, compute d, decrypt c</code></pre>
-                    <p>Recovered the plaintext and explained the math behind the attack.</p>
-                `
-            },
-            {
-                id: 4,
-                title: "Stego Image Extraction",
-                platform: "ForensicsLab",
-                difficulty: "easy",
-                tags: ["forensics", "stego", "image"],
-                description: "Extracting hidden data from a PNG image using steganography tools.",
-                date: "2025-01-22",
-                points: 150,
-                category: "forensics",
-                writeup: `
-                    <h3>Challenge Overview</h3>
-                    <p>A PNG image contained a hidden flag using LSB steganography.</p>
-                    <h3>Solution</h3>
-                    <pre><code>steghide extract -sf challenge.png</code></pre>
-                    <p>Flag extracted successfully.</p>
-                `
-            },
-            {
-                id: 5,
-                title: "OSINT: Social Media Sleuth",
-                platform: "CTFTime",
-                difficulty: "easy",
-                tags: ["osint", "recon"],
-                description: "Finding a flag hidden in a series of social media posts.",
-                date: "2025-04-12",
-                points: 100,
-                category: "osint",
-                writeup: `
-                    <h3>Challenge Overview</h3>
-                    <p>Given a username, I traced their digital footprint across multiple platforms and found the flag in a Twitter image metadata.</p>
-                `
-            }
-        ];
-
-        // =================== RENDER CTF CARDS ===================
-        function renderCTFCards(filter = "all") {
-            const grid = document.getElementById('ctfGrid');
-            grid.innerHTML = '';
-            let filtered = ctfData;
-            if (filter !== "all") {
-                filtered = ctfData.filter(c => c.category === filter);
-            }
-            if (filtered.length === 0) {
-                grid.innerHTML = `<p style="color:var(--text-secondary);text-align:center;">No challenges found for this category.</p>`;
-                return;
-            }
-            filtered.forEach(card => {
-                grid.innerHTML += `
-                <div class="ctf-card" tabindex="0" data-id="${card.id}">
-                    <div class="ctf-header">
-                        <div>
-                            <div class="ctf-title">${card.title}</div>
-                            <span class="ctf-platform">${card.platform}</span>
-                        </div>
-                        <div class="ctf-difficulty">
-                            <span class="difficulty-badge difficulty-${card.difficulty}">${card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1)}</span>
-                        </div>
-                    </div>
-                    <div class="ctf-description">${card.description}</div>
-                    <div class="ctf-tags">
-                        ${card.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
-                    <div class="ctf-meta">
-                        <span>${card.date}</span>
-                        <span>${card.points} pts</span>
-                    </div>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">0xGrooted</a>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="roadmap.html" class="nav-link">Roadmap</a></li>
+                    <li><a href="writeups.html" class="nav-link active">Writeups</a></li>
+                    <li><a href="certificates.html" class="nav-link">Certificates</a></li>
+                    <li><a href="notes.html" class="nav-link">Notes</a></li>
+                    <li><a href="tools.html" class="nav-link">Tools & Labs</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Active</span>
                 </div>
-                `;
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section id="writeups-page">
+                <div class="section-header">
+                    <h2>CTF Writeups</h2>
+                    <p>In-depth solutions and walkthroughs for various Capture The Flag (CTF) challenges I have completed.</p>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-category="all">All</button>
+                    <button class="filter-btn" data-category="web">Web Exploitation</button>
+                    <button class="filter-btn" data-category="pwn">Binary Exploitation</button>
+                    <button class="filter-btn" data-category="forensics">Forensics</button>
+                    <button class="filter-btn" data-category="crypto">Cryptography</button>
+                    <button class="filter-btn" data-category="reversing">Reverse Engineering</button>
+                </div>
+
+                <div class="writeups-grid" id="writeups-container">
+                    </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="writeup-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title"></h2>
+            <p class="modal-category" id="modal-category"></p>
+            <div id="modal-content-inner"></div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const writeupsContainer = document.getElementById('writeups-container');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const detailModal = document.getElementById('writeup-detail-modal');
+            const detailCloseBtn = document.querySelector('#writeup-detail-modal .close-btn');
+
+            // The writeup data is now embedded directly in the script
+            const allWriteups = [
+              {
+                "id": 1,
+                "title": "Hacking with SQL Injection",
+                "category": "web",
+                "summary": "A detailed walkthrough on how to exploit a basic SQL injection vulnerability to bypass authentication and dump the database.",
+                "details": "### Introduction\nThis writeup covers a classic SQL injection vulnerability found in a login form. We will go through the steps of identifying the vulnerability, bypassing the login, and then extracting data from the database.\n\n### Step 1: Identifying the Vulnerability\nWe first try to enter a single quote `'` in the username field. If the application returns a generic error, it's a good sign that the query is failing due to an unescaped character. The backend query might look something like this: `SELECT * FROM users WHERE username = 'user' AND password = 'password'`. When we input `'`, the query becomes `SELECT * FROM users WHERE username = ''''...` which causes a syntax error.\n\n### Step 2: Bypassing the Login\nTo bypass the login, we can use a payload like `admin'--`. The double hyphen `--` comments out the rest of the SQL query. The final query becomes `SELECT * FROM users WHERE username = 'admin'--' AND password = 'password'`. This query is valid and will likely return the row for the 'admin' user, logging us in.\n\n### Step 3: Extracting Data\nTo extract data, we can use a UNION-based attack. We'll need to determine the number of columns in the original query first. We can do this with `ORDER BY`. Once we know the column count, we can use `UNION SELECT` to retrieve data from other tables, for example: `admin' UNION SELECT 1, database(), version()--`."
+              },
+              {
+                "id": 2,
+                "title": "Buffer Overflow on a Simple C Program",
+                "category": "pwn",
+                "summary": "An explanation of a simple stack-based buffer overflow and how to overwrite the return address to execute a shell.",
+                "details": "### Introduction\nThis writeup details a stack-based buffer overflow exploit on a simple C program. The program takes user input and copies it into a fixed-size buffer without proper length checking.\n\n### Step 1: Fuzzing the Input\nFirst, we fuzz the input to find the overflow point. We can use a pattern like `AAAAA...` and a tool like `gdb` to identify the exact offset where the program crashes and overwrites the return address.\n\n### Step 2: Crafting the Payload\nThe payload consists of three parts:\n1.  **Junk:** The junk data to fill the buffer up to the return address. This is the offset we found in the previous step.\n2.  **Return Address:** The new address we want the program to jump to. In this case, we'll point it to our shellcode.\n3.  **Shellcode:** The shellcode that will spawn a shell, such as `/bin/sh`."
+              },
+              {
+                "id": 3,
+                "title": "Forensic Analysis of a USB Drive",
+                "category": "forensics",
+                "summary": "A case study on how to use forensic tools to analyze a raw image of a USB drive to find hidden files and user activity.",
+                "details": "### Introduction\nThis document outlines a forensic analysis of a raw disk image of a USB drive (`usb.dd`). Our goal is to find any deleted files and glean information about the drive's usage.\n\n### Tools Used\n- `dd` to create the disk image.\n- `foremost` to carve files from the raw image.\n- `scalpel` as an alternative carving tool.\n- `strings` to find plain text data in the image.\n- `binwalk` to analyze the file for embedded files and signatures.\n\n### Step 1: File Carving\nWe use a tool like `foremost` to carve for deleted files. The command `foremost -i usb.dd` will extract files based on their headers and footers.\n\n### Step 2: String and Signature Analysis\nWe run `strings` on the image to find any readable text that might contain clues, such as file paths, user names, or passwords. `binwalk` can also be useful to identify hidden partitions or embedded file systems within the image."
+              },
+              {
+                "id": 4,
+                "title": "Cracking a Caesar Cipher",
+                "category": "crypto",
+                "summary": "A simple explanation of the Caesar cipher and how to use frequency analysis to break it without the key.",
+                "details": "### What is a Caesar Cipher?\nA Caesar cipher is one of the simplest and most well-known encryption techniques. It's a type of substitution cipher in which each letter in the plaintext is shifted a certain number of places down the alphabet.\n\n### The Attack: Frequency Analysis\nSince the cipher only shifts letters, the frequency of letters remains the same. The most common letter in English is 'E'. The most common letter in a given ciphertext is likely the encrypted version of 'E'. By finding the most frequent letter in the ciphertext and assuming it corresponds to 'E', we can calculate the shift key and decrypt the entire message. A simple python script can automate this process:\n\n`\ndef decrypt(text, s):\n    result = \"\"\n    for char in text:\n        if char.isupper():\n            result += chr((ord(char) + s - 65) % 26 + 65)\n        else:\n            result += chr((ord(char) + s - 97) % 26 + 97)\n    return result\n\n# Example usage:\n# encrypted = \"Vjku ku c ugewtg oguucig\"\n# key = 2\n# decrypted = decrypt(encrypted, key)\n# print(decrypted) # -> This is a secure message\n`"
+              },
+              {
+                "id": 5,
+                "title": "Reverse Engineering a Simple Binary",
+                "category": "reversing",
+                "summary": "Using `gdb` and `objdump` to reverse a stripped binary and find the flag in memory.",
+                "details": "### Introduction\nThis writeup focuses on reversing a simple stripped binary to find a hardcoded flag. A stripped binary has no symbol information, so we must rely on other tools.\n\n### Tools Used\n- `objdump` to disassemble the binary.\n- `gdb` for dynamic analysis.\n\n### Step 1: Disassembly\nFirst, we use `objdump -d a.out` to disassemble the binary and look for interesting function calls or patterns. We'll be looking for comparisons, `printf` calls, or calls to library functions that might handle flags.\n\n### Step 2: Debugging with `gdb`\nUsing `gdb`, we can set breakpoints at entry points and key locations, like right before a `printf` call. We can then inspect the registers and memory to find the flag. The command `x/s $rax` is often useful to inspect the contents of a register as a string."
+              }
+            ];
+
+            // Simple Markdown rendering function for the solution content
+            function renderMarkdown(markdownText) {
+                const lines = markdownText.split('\n');
+                let html = '';
+                let inCodeBlock = false;
+
+                lines.forEach(line => {
+                    if (line.startsWith('### ')) {
+                        html += `<h4>${line.substring(4)}</h4>`;
+                    } else if (line.startsWith('`') && line.endsWith('`') && line.length > 1) {
+                        html += `<p><code>${line.substring(1, line.length - 1)}</code></p>`;
+                    } else if (line.trim().startsWith('```')) {
+                        inCodeBlock = !inCodeBlock;
+                        if (!inCodeBlock) {
+                            html += `</pre>`;
+                        } else {
+                            html += `<pre>`;
+                        }
+                    } else if (inCodeBlock) {
+                        html += `<code>${line.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>\n`;
+                    } else if (line.trim() !== '') {
+                        html += `<p>${line}</p>`;
+                    }
+                });
+                return html;
+            }
+
+            // Function to render writeups on the page
+            function renderWriteups(filterCategory = 'all') {
+                writeupsContainer.innerHTML = '';
+                
+                const filteredWriteups = allWriteups.filter(writeup => filterCategory === 'all' || writeup.category === filterCategory);
+                
+                if (filteredWriteups.length === 0) {
+                    writeupsContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted);">No writeups found for category "${filterCategory}".</p>`;
+                    return;
+                }
+
+                filteredWriteups.forEach((writeup, index) => {
+                    const writeupCard = document.createElement('div');
+                    writeupCard.className = 'writeup-card';
+                    writeupCard.style.animationDelay = `${index * 0.1}s`; // Add a staggered animation delay
+                    writeupCard.dataset.id = writeup.id;
+                    writeupCard.innerHTML = `
+                        <h3>${writeup.title}</h3>
+                        <p class="category">Category: ${writeup.category}</p>
+                        <p>${writeup.summary}</p>
+                    `;
+                    writeupsContainer.appendChild(writeupCard);
+                });
+            }
+
+            // Function to show the detail modal for a specific writeup
+            function showWriteupDetails(writeupId) {
+                const writeup = allWriteups.find(w => w.id == writeupId);
+                if (!writeup) return;
+
+                document.getElementById('modal-title').innerText = writeup.title;
+                document.getElementById('modal-category').innerText = `Category: ${writeup.category}`;
+                
+                const contentContainer = document.getElementById('modal-content-inner');
+                contentContainer.innerHTML = renderMarkdown(writeup.details);
+
+                detailModal.style.display = 'block';
+            }
+
+            // Event listener for filter buttons
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    renderWriteups(button.dataset.category);
+                });
             });
-        }
 
-        // =================== FILTER BUTTONS ===================
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                renderCTFCards(this.dataset.filter);
+            // Event listener for writeup cards (using event delegation)
+            writeupsContainer.addEventListener('click', (e) => {
+                const writeupCard = e.target.closest('.writeup-card');
+                if (writeupCard) {
+                    showWriteupDetails(writeupCard.dataset.id);
+                }
             });
+
+            // Close modals functionality
+            detailCloseBtn.addEventListener('click', () => {
+                detailModal.style.display = 'none';
+            });
+            window.addEventListener('click', (event) => {
+                if (event.target === detailModal) {
+                    detailModal.style.display = 'none';
+                }
+            });
+            
+            // Initial call to render the writeups
+            renderWriteups();
         });
-
-        // =================== MODAL LOGIC ===================
-        const modal = document.getElementById('writeupModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const writeupContent = document.getElementById('writeupContent');
-        const closeBtn = document.querySelector('.close');
-
-        document.getElementById('ctfGrid').addEventListener('click', function(e) {
-            let card = e.target.closest('.ctf-card');
-            if (!card) return;
-            let id = parseInt(card.dataset.id);
-            let data = ctfData.find(c => c.id === id);
-            if (!data) return;
-            modalTitle.innerText = data.title + " (" + data.platform + ")";
-            writeupContent.innerHTML = data.writeup;
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        });
-
-        document.getElementById('ctfGrid').addEventListener('keydown', function(e) {
-            if (e.key === "Enter" || e.key === " ") {
-                let card = e.target.closest('.ctf-card');
-                if (!card) return;
-                let id = parseInt(card.dataset.id);
-                let data = ctfData.find(c => c.id === id);
-                if (!data) return;
-                modalTitle.innerText = data.title + " (" + data.platform + ")";
-                writeupContent.innerHTML = data.writeup;
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            }
-        });
-
-        closeBtn.onclick = function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        };
-        window.onclick = function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        };
-        window.onkeydown = function(event) {
-            if (event.key === "Escape") {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        };
-
-        // =================== PARTICLE BACKGROUND ===================
-        function createParticles() {
-            const bg = document.getElementById('bgAnimation');
-            for (let i = 0; i < 40; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.top = Math.random() * 100 + '%';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDuration = (4 + Math.random() * 4) + 's';
-                bg.appendChild(p);
-            }
-        }
-
-        // =================== INIT ===================
-        renderCTFCards();
-        createParticles();
     </script>
 </body>
 </html>
+````

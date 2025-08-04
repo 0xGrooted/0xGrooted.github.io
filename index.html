@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>0xGrooted - The Journey</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>0xGrooted - Elite Blue Team Security</title>
     <style>
-        /* =================== GLOBAL STYLES =================== */
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,74 +14,35 @@
         }
 
         :root {
-            --primary-color: #00ff41;
-            --secondary-color: #ff0080;
-            --tertiary-color: #00d4ff;
-            --bg-dark: #0a0a0a;
-            --bg-darker: #050505;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-glass: rgba(22, 33, 62, 0.4);
             --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --glow-color: rgba(0, 255, 65, 0.5);
+            --text-secondary: #b8c5d6;
+            --text-muted: #6b7894;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #0f3460;
+            --accent-green: #00ff88;
+            --accent-purple: #6c5ce7;
+            --accent-red: #fd79a8;
+            --accent-yellow: #fdcb6e;
+            --border-glow: rgba(0, 212, 255, 0.3);
+            --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #6c5ce7 50%, #00ff88 100%);
+            --gradient-card: linear-gradient(145deg, rgba(22, 33, 62, 0.8), rgba(15, 52, 96, 0.4));
+            --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.1);
         }
 
         body {
-            font-family: 'Fira Code', monospace;
-            background: var(--bg-dark);
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
             color: var(--text-primary);
-            overflow-x: hidden;
             line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* =================== LOADING SCREEN =================== */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-darker);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        .terminal-text {
-            font-family: 'Fira Code', monospace;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            margin-bottom: 2rem;
-            opacity: 0;
-            animation: typewriter 2s steps(20) forwards;
-        }
-
-        .loading-bar {
-            width: 300px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .loading-progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
-            width: 0%;
-            animation: loading 3s ease-in-out forwards;
-            box-shadow: 0 0 10px var(--glow-color);
-        }
-
-        @keyframes typewriter {
-            to { opacity: 1; }
-        }
-
-        @keyframes loading {
-            to { width: 100%; }
-        }
-
-        /* =================== ANIMATED BACKGROUND =================== */
+        /* Animated background */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -90,824 +51,1609 @@
             height: 100%;
             z-index: -1;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(108, 92, 231, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
         }
 
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+        @keyframes bgFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
-            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        /* Matrix rain effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.05;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 98px,
+                rgba(0, 212, 255, 0.03) 100px
+            );
+            animation: matrixScroll 20s linear infinite;
         }
 
-        /* =================== NAVIGATION =================== */
-        .navbar {
+        @keyframes matrixScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(100px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Enhanced Header */
+        header {
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(10, 10, 10, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glow);
             z-index: 1000;
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow-glow);
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 2rem;
+            padding: 1rem 0;
         }
 
         .logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            color: var(--primary-color);
-            text-shadow: 0 0 10px var(--glow-color);
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            position: relative;
+            letter-spacing: -0.02em;
+        }
+
+        .logo::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
             transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
             position: relative;
+            padding: 0.5rem 0;
+            font-weight: 500;
         }
 
-        .nav-links a:hover {
-            color: var(--primary-color);
-            text-shadow: 0 0 5px var(--glow-color);
-        }
-
-        .nav-links a::after {
+        .nav-links a::before {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--primary-color);
+            background: var(--gradient-primary);
             transition: width 0.3s ease;
         }
 
-        .nav-links a:hover::after {
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
             width: 100%;
         }
 
-        /* =================== HERO SECTION =================== */
-        .hero {
-            height: 100vh;
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-primary);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Status indicator */
+        .status-indicator {
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
+            gap: 0.5rem;
+            color: var(--accent-green);
+            font-size: 0.8rem;
         }
 
-        .hero-content h1 {
-            font-family: 'Orbitron', monospace;
-            font-size: 4rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-color), var(--tertiary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        .hero-content .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        .cta-button {
-            background: linear-gradient(45deg, var(--primary-color), var(--tertiary-color));
-            color: var(--bg-dark);
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 6px;
-            font-family: 'Fira Code', monospace;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 255, 65, 0.3);
-        }
-
-        @keyframes glow {
-            to { text-shadow: 0 0 20px var(--glow-color); }
-        }
-
-        /* =================== TIMELINE SECTION =================== */
-        .timeline-section {
-            padding: 5rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            font-family: 'Orbitron', monospace;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: var(--primary-color);
-        }
-
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--primary-color), var(--tertiary-color));
-            box-shadow: 0 0 10px var(--glow-color);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin: 2rem 0;
-            display: flex;
-            justify-content: center;
-            opacity: 0;
-            animation: slideInUp 0.6s ease forwards;
-        }
-
-        .timeline-item:nth-child(even) .timeline-content {
-            margin-right: auto;
-            margin-left: 2rem;
-        }
-
-        .timeline-item:nth-child(odd) .timeline-content {
-            margin-left: auto;
-            margin-right: 2rem;
-        }
-
-        .timeline-content {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            border-radius: 10px;
-            padding: 2rem;
-            width: 45%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .timeline-content:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 255, 65, 0.2);
-            border-color: var(--primary-color);
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 16px;
-            height: 16px;
-            background: var(--primary-color);
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--glow-color);
-            z-index: 10;
+            animation: pulse 2s infinite;
         }
 
-        .timeline-date {
-            color: var(--primary-color);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        .timeline-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
+        /* Main content */
+        main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
         }
 
-        .timeline-description {
-            color: var(--text-secondary);
-            line-height: 1.6;
+        .section {
+            display: none;
+            padding: 3rem 0;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .section.active {
+            display: block;
         }
 
         @keyframes slideInUp {
-            to {
-                opacity: 1;
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
                 transform: translateY(0);
             }
         }
 
-        /* =================== MODAL =================== */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: var(--bg-dark);
-            margin: 5% auto;
-            padding: 2rem;
-            border: 1px solid var(--primary-color);
-            border-radius: 10px;
-            width: 80%;
-            max-width: 600px;
+        /* Enhanced Hero Section */
+        .hero {
+            text-align: center;
+            padding: 6rem 0;
             position: relative;
-            animation: modalSlideIn 0.3s ease;
         }
 
-        .close {
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            animation: heroGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroGlow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3)); }
+            to { filter: drop-shadow(0 0 40px rgba(108, 92, 231, 0.4)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
             color: var(--text-secondary);
-            float: right;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s ease;
+            margin-bottom: 2rem;
+            font-weight: 400;
         }
 
-        .close:hover {
-            color: var(--primary-color);
-        }
-
-        @keyframes modalSlideIn {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* =================== RESPONSIVE DESIGN =================== */
-        @media (max-width: 768px) {
-            .nav-container {
-                padding: 1rem;
-            }
-
-            .nav-links {
-                gap: 1rem;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .timeline::before {
-                left: 20px;
-            }
-
-            .timeline-item:nth-child(even) .timeline-content,
-            .timeline-item:nth-child(odd) .timeline-content {
-                margin-left: 40px;
-                margin-right: 0;
-                width: calc(100% - 60px);
-            }
-
-            .timeline-dot {
-                left: 20px;
-            }
-        }
-
-        .hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* =================== ABOUT SECTION =================== */
-        .about-section {
-            padding: 5rem 2rem;
-            background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, rgba(0, 212, 255, 0.05) 100%);
-        }
-
-        .about-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 3rem;
+        .hero-tagline {
+            font-size: 1rem;
+            color: var(--text-muted);
             margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .about-text {
+        .cta-buttons {
             display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .about-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            border-radius: 10px;
-            padding: 2rem;
+        .cta-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: 600;
+            text-decoration: none;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
         }
 
-        .about-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 255, 65, 0.1);
-            border-color: var(--primary-color);
+        .cta-btn.primary {
+            background: var(--gradient-primary);
+            color: var(--bg-primary);
         }
 
-        .about-card h3 {
-            font-family: 'Orbitron', monospace;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
+        .cta-btn.secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 2px solid var(--accent-primary);
         }
 
-        .about-card p {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 1rem;
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
         }
 
-        .highlight {
-            color: var(--primary-color);
-            font-weight: 500;
-            text-shadow: 0 0 5px var(--glow-color);
-        }
-
-        .skills-grid {
+        /* Interactive Stats */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .skill-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            background: rgba(0, 255, 65, 0.1);
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .skill-item:hover {
-            background: rgba(0, 255, 65, 0.2);
-            transform: translateX(5px);
-        }
-
-        .skill-icon {
-            font-size: 1.2rem;
-        }
-
-        .skill-name {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .focus-list {
-            list-style: none;
-            margin-top: 1rem;
-        }
-
-        .focus-list li {
-            color: var(--text-secondary);
-            margin-bottom: 0.8rem;
-            padding-left: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .focus-list li:hover {
-            color: var(--text-primary);
-            transform: translateX(5px);
-        }
-
-        .focus-list strong {
-            color: var(--primary-color);
-        }
-
-        .about-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            gap: 2rem;
+            margin: 4rem 0;
         }
 
         .stat-card {
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            border-radius: 10px;
-            padding: 1.5rem;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 2rem;
             text-align: center;
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
         }
 
         .stat-card:hover {
-            background: rgba(0, 255, 65, 0.2);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 255, 65, 0.2);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+            border-color: var(--accent-primary);
         }
 
         .stat-number {
-            font-family: 'Orbitron', monospace;
-            font-size: 2rem;
+            font-size: 3rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--accent-primary);
             margin-bottom: 0.5rem;
         }
 
         .stat-label {
             color: var(--text-secondary);
             font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
-        .about-cta {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+        /* Roadmap Section */
+        .roadmap-container {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .roadmap-timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient-primary);
+            transform: translateX(-50%);
+        }
+
+        .roadmap-item {
+            position: relative;
+            margin: 3rem 0;
+            animation: roadmapFadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .roadmap-item:nth-child(odd) .roadmap-content {
+            margin-left: 0;
+            margin-right: 50%;
+            padding-right: 3rem;
+        }
+
+        .roadmap-item:nth-child(even) .roadmap-content {
+            margin-left: 50%;
+            margin-right: 0;
+            padding-left: 3rem;
+        }
+
+        .roadmap-content {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-glow);
             border-radius: 15px;
-            padding: 3rem;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .cta-text {
-            font-size: 1.3rem;
+        .roadmap-content:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .roadmap-marker {
+            position: absolute;
+            left: 50%;
+            top: 2rem;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            border: 4px solid var(--bg-primary);
+            box-shadow: 0 0 0 4px var(--accent-primary);
+        }
+
+        .roadmap-marker.completed {
+            background: var(--accent-green);
+            box-shadow: 0 0 0 4px var(--accent-green);
+        }
+
+        .roadmap-marker.current {
+            background: var(--accent-yellow);
+            box-shadow: 0 0 0 4px var(--accent-yellow);
+            animation: currentPulse 2s infinite;
+        }
+
+        @keyframes currentPulse {
+            0% { box-shadow: 0 0 0 4px var(--accent-yellow), 0 0 0 8px transparent; }
+            50% { box-shadow: 0 0 0 4px var(--accent-yellow), 0 0 0 20px rgba(253, 203, 110, 0.2); }
+            100% { box-shadow: 0 0 0 4px var(--accent-yellow), 0 0 0 8px transparent; }
+        }
+
+        @keyframes roadmapFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .roadmap-date {
+            color: var(--accent-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-title {
             color: var(--text-primary);
-            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
-        .cta-buttons {
+        .roadmap-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Enhanced Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .card {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 212, 255, 0.15);
+            border-color: var(--accent-primary);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Interactive Terminal */
+        .terminal {
+            background: #000;
+            border: 2px solid var(--accent-green);
+            border-radius: 10px;
+            padding: 0;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 2rem 0;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .terminal-header {
+            background: var(--accent-green);
+            color: #000;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
             display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .cta-button.secondary {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
+        .terminal-controls {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        .cta-button.secondary:hover {
-            background: var(--primary-color);
-            color: var(--bg-dark);
+        .terminal-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f57;
         }
 
-        .cta-button.primary {
-            background: linear-gradient(45deg, var(--secondary-color), var(--tertiary-color));
+        .terminal-control:nth-child(2) { background: #ffbd2e; }
+        .terminal-control:nth-child(3) { background: #28ca42; }
+
+        .terminal-content {
+            padding: 1rem;
+            color: var(--accent-green);
+            font-size: 0.9rem;
         }
 
-        /* =================== RESPONSIVE UPDATES =================== */
+        .terminal-line {
+            margin: 0.5rem 0;
+        }
+
+        .terminal-prompt {
+            color: var(--accent-primary);
+        }
+
+        .terminal-command {
+            color: var(--text-primary);
+        }
+
+        /* Skill Progress Bars */
+        .skill-item {
+            margin: 1.5rem 0;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-name {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .skill-level {
+            color: var(--accent-primary);
+            font-size: 0.9rem;
+        }
+
+        .skill-bar {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            transition: width 2s ease-out;
+            position: relative;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Enhanced mobile menu */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Floating action button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: var(--bg-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
-            .about-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
+            .menu-toggle {
+                display: block;
             }
 
-            .about-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cta-buttons {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 15, 0.98);
+                backdrop-filter: blur(20px);
                 flex-direction: column;
-                align-items: center;
+                padding: 2rem;
+                border-top: 1px solid var(--border-glow);
+                animation: slideDown 0.3s ease-out;
             }
 
-            .cta-button {
-                width: 200px;
+            .nav-links.active {
+                display: flex;
             }
+
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .roadmap-timeline::before {
+                left: 20px;
+            }
+
+            .roadmap-marker {
+                left: 20px;
+            }
+
+            .roadmap-item:nth-child(odd) .roadmap-content,
+            .roadmap-item:nth-child(even) .roadmap-content {
+                margin-left: 50px;
+                margin-right: 0;
+                padding-left: 2rem;
+                padding-right: 1rem;
+            }
+
+            .fab {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Progress ring */
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+        }
+
+        .progress-ring-circle {
+            stroke: var(--accent-primary);
+            stroke-width: 4;
+            fill: transparent;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 2s ease-out;
+        }
+
+        .progress-ring-bg {
+            stroke: var(--bg-secondary);
+            stroke-width: 4;
+            fill: transparent;
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="terminal-text">Loading 0xGrooted...</div>
-        <div class="loading-bar">
-            <div class="loading-progress"></div>
+    <div class="bg-animation"></div>
+    <div class="matrix-bg"></div>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">0xGrooted</a>
+                  <ul class="nav-links">
+                      <li><a href="index.html" class="nav-link active">Home</a></li>
+                      <li><a href="roadmap.html" class="nav-link">Roadmap</a></li>
+                      <li><a href="writeups.html" class="nav-link">Writeups</a></li>
+                      <li><a href="certificates.html" class="nav-link">Certificates</a></li>
+                      <li><a href="notes.html" class="nav-link">Notes</a></li>
+                      <li><a href="tools.html" class="nav-link">Tools & Labs</a></li>
+                      <li><a href="contact.html" class="nav-link">Contact</a></li>
+                  </ul>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Active</span>
+                </div>
+                <button class="menu-toggle">☰</button>
+            </nav>
         </div>
-    </div>
+    </header>
 
-    <!-- Animated Background -->
-    <div class="bg-animation" id="bgAnimation"></div>
-
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">0xGrooted</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="writeups.html">CTF Writeups</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="https://github.com/0xGrooted" target="_blank">GitHub</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>0xGrooted</h1>
-            <p class="subtitle">From Code to Cyber: The Ethical Hacker's Journey</p>
-            <button class="cta-button" onclick="scrollToTimeline()">Explore Journey</button>
-        </div>
-    </section>
-
-    <!-- Timeline Section -->
-    <section class="timeline-section">
-        <h2 class="section-title">The Journey</h2>
-        <div class="timeline" id="timeline">
-            <!-- Timeline items will be generated by JavaScript -->
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about-section" id="about">
-        <div class="about-container">
-            <h2 class="section-title">About 0xGrooted</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <div class="about-card">
-                        <h3>The Transformation</h3>
-                        <p>What started as a passion for software engineering quickly evolved into something deeper. I discovered that my true calling wasn't just in building applications—it was in understanding how they could be broken, and more importantly, how to secure them.</p>
-                        
-                        <p>Today, I'm <span class="highlight">0xGrooted</span>—a dedicated ethical hacker and penetration tester in training, combining my software engineering background with advanced cybersecurity skills to protect digital infrastructures.</p>
+    <main>
+        <div class="container">
+            <!-- Home Section -->
+            <section id="home" class="section active">
+                <div class="hero">
+                    <div class="hero-content">
+                        <h1>0xGrooted</h1>
+                        <div class="hero-subtitle">Blue Team Security Professional</div>
+                        <div class="hero-tagline">Transforming cyber threats into defensive intelligence through advanced detection engineering and threat hunting</div>
+                        <div class="cta-buttons">
+                            <a href="#" class="cta-btn primary" data-section="roadmap">View Roadmap</a>
+                            <a href="#" class="cta-btn secondary" data-section="writeups">Latest Writeups</a>
+                        </div>
                     </div>
-                    
-                    <div class="about-card">
-                        <h3>Core Expertise</h3>
-                        <div class="skills-grid">
-                            <div class="skill-item">
-                                <span class="skill-icon">🐍</span>
-                                <span class="skill-name">Python Scripting</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="15">0</div>
+                        <div class="stat-label">Skills Mastered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="8">0</div>
+                        <div class="stat-label">Certifications Planned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Lab Hours</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="25">0</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card fade-in">
+                        <div class="card-icon">🛡️</div>
+                        <h3>Defense Mastery</h3>
+                        <p>Specializing in advanced threat detection, SIEM engineering, and building resilient security operations that can identify and neutralize sophisticated adversaries.</p>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">SIEM Engineering</span>
+                                <span class="skill-level">Expert</span>
                             </div>
-                            <div class="skill-item">
-                                <span class="skill-icon">🌐</span>
-                                <span class="skill-name">Web App Security</span>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="90%"></div>
                             </div>
-                            <div class="skill-item">
-                                <span class="skill-icon">🐧</span>
-                                <span class="skill-name">Linux Systems</span>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Threat Hunting</span>
+                                <span class="skill-level">Advanced</span>
                             </div>
-                            <div class="skill-item">
-                                <span class="skill-icon">🔍</span>
-                                <span class="skill-name">Penetration Testing</span>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-icon">🛡️</span>
-                                <span class="skill-name">Vulnerability Assessment</span>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-icon">🎯</span>
-                                <span class="skill-name">CTF Challenges</span>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="75%"></div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="about-card">
-                        <h3>Current Focus</h3>
-                        <ul class="focus-list">
-                            <li>🎓 Preparing for <strong>OSCP Certification</strong></li>
-                            <li>🚩 Active in CTF competitions on HTB, TryHackMe, and VulnHub</li>
-                            <li>🔬 Developing custom penetration testing tools</li>
-                            <li>📝 Contributing to the cybersecurity community through writeups</li>
-                            <li>🎯 Seeking professional penetration testing opportunities</li>
+                    <div class="card fade-in">
+                        <div class="card-icon">🔍</div>
+                        <h3>Intelligence Analysis</h3>
+                        <p>Transforming raw security data into actionable intelligence through advanced analytics, behavioral analysis, and threat intelligence correlation.</p>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Malware Analysis</span>
+                                <span class="skill-level">Intermediate</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="60%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Digital Forensics</span>
+                                <span class="skill-level">Advanced</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">⚡</div>
+                        <h3>Automation & Innovation</h3>
+                        <p>Developing cutting-edge security tools and automation frameworks that enhance detection capabilities and streamline security operations.</p>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Python Security</span>
+                                <span class="skill-level">Expert</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Cloud Security</span>
+                                <span class="skill-level">Learning</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="40%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <div class="terminal-control"></div>
+                            <div class="terminal-control"></div>
+                            <div class="terminal-control"></div>
+                        </div>
+                        0xGrooted@blueteam:~$
+                    </div>
+                    <div class="terminal-content">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">┌──(0xgrooted㉿kali)-[~/mission]</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">└─$</span> <span class="terminal-command">cat mission.txt</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00ff88;">MISSION: Become Elite Blue Team Security Professional</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00d4ff;">STATUS: In Progress - 65% Complete</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #fdcb6e;">NEXT: GIAC GCIH Certification</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">└─$</span> <span class="terminal-command">./start_journey.sh</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00ff88;">[+] Loading defensive capabilities...</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00ff88;">[+] Threat hunting protocols active</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00ff88;">[+] Ready to defend</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Roadmap Section -->
+            <section id="roadmap" class="section">
+                <div class="hero">
+                    <h1>Blue Team Mastery Roadmap</h1>
+                    <p>My strategic path to becoming an elite Blue Team security professional</p>
+                </div>
+
+                <div class="roadmap-container">
+                    <div class="roadmap-timeline">
+                        <div class="roadmap-item fade-in">
+                            <div class="roadmap-marker completed"></div>
+                            <div class="roadmap-content">
+                                <div class="roadmap-date">Q1 2025 - COMPLETED</div>
+                                <div class="roadmap-title">Foundation & Lab Setup</div>
+                                <div class="roadmap-description">
+                                    Built comprehensive home lab environment with Windows AD, Linux servers, and network monitoring. Established baseline skills in networking, scripting, and system administration.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roadmap-item fade-in">
+                            <div class="roadmap-marker current"></div>
+                            <div class="roadmap-content">
+                                <div class="roadmap-date">Q2-Q3 2025 - IN PROGRESS</div>
+                                <div class="roadmap-title">Core Certifications & SIEM Mastery</div>
+                                <div class="roadmap-description">
+                                    Currently pursuing CompTIA Security+ and Blue Team Level 1. Deep diving into Splunk and Elastic Stack for log analysis, correlation, and detection rule development.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roadmap-item fade-in">
+                            <div class="roadmap-marker"></div>
+                            <div class="roadmap-content">
+                                <div class="roadmap-date">Q4 2025</div>
+                                <div class="roadmap-title">Advanced Threat Detection</div>
+                                <div class="roadmap-description">
+                                    GIAC GCIH certification and advanced threat hunting techniques. Focus on behavioral analysis, anomaly detection, and developing custom hunting queries for APT detection.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roadmap-item fade-in">
+                            <div class="roadmap-marker"></div>
+                            <div class="roadmap-content">
+                                <div class="roadmap-date">Q1 2026</div>
+                                <div class="roadmap-title">Malware Analysis & Reverse Engineering</div>
+                                <div class="roadmap-description">
+                                    Deep dive into malware analysis with GREM certification. Master static and dynamic analysis techniques, develop YARA rules, and create custom detection signatures.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roadmap-item fade-in">
+                            <div class="roadmap-marker"></div>
+                            <div class="roadmap-content">
+                                <div class="roadmap-date">Q2 2026</div>
+                                <div class="roadmap-title">Digital Forensics Excellence</div>
+                                <div class="roadmap-description">
+                                    GCFA certification and advanced digital forensics. Master memory analysis, timeline reconstruction, and evidence preservation for complex incident response scenarios.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roadmap-item fade-in">
+                            <div class="roadmap-marker"></div>
+                            <div class="roadmap-content">
+                                <div class="roadmap-date">Q3-Q4 2026</div>
+                                <div class="roadmap-title">Cloud Security & Automation</div>
+                                <div class="roadmap-description">
+                                    AWS/Azure security certifications and cloud-native security tools. Develop advanced automation frameworks for threat detection and response orchestration.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roadmap-item fade-in">
+                            <div class="roadmap-marker"></div>
+                            <div class="roadmap-content">
+                                <div class="roadmap-date">2027 & Beyond</div>
+                                <div class="roadmap-title">Elite Status & Leadership</div>
+                                <div class="roadmap-description">
+                                    CISSP certification, advanced research projects, and thought leadership in Blue Team security. Contributing to the cybersecurity community through innovative defense strategies.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card fade-in">
+                        <h3>🎯 Current Focus Areas</h3>
+                        <ul>
+                            <li>SIEM rule optimization & tuning</li>
+                            <li>Threat hunting methodology development</li>
+                            <li>Detection engineering best practices</li>
+                            <li>Incident response automation</li>
+                        </ul>
+                    </div>
+                    <div class="card fade-in">
+                        <h3>📊 Progress Metrics</h3>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Overall Progress</span>
+                                <span class="skill-level">65%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="65%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Certifications</span>
+                                <span class="skill-level">25%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="25%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Practical Skills</span>
+                                <span class="skill-level">80%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card fade-in">
+                        <h3>🔮 Future Vision</h3>
+                        <p>Building a reputation as a leading Blue Team expert through:</p>
+                        <ul>
+                            <li>Revolutionary detection techniques</li>
+                            <li>Open-source security tools</li>
+                            <li>Conference speaking engagements</li>
+                            <li>Mentoring next-gen defenders</li>
                         </ul>
                     </div>
                 </div>
-                
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">CTF Challenges Solved</div>
+            </section>
+
+            <!-- Writeups Section -->
+            <section id="writeups" class="section">
+                <div class="hero">
+                    <h1>Technical Writeups</h1>
+                    <p>Deep dives into cybersecurity research, analysis, and practical implementations</p>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card fade-in">
+                        <div class="card-icon">🔬</div>
+                        <h3>Advanced Persistent Threat Detection</h3>
+                        <p><strong>Coming Soon:</strong> Behavioral analysis techniques for identifying sophisticated APT campaigns using SIEM correlation rules and machine learning.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Splunk</span>
+                            <span class="tag">Machine Learning</span>
+                            <span class="tag">MITRE ATT&CK</span>
+                        </div>
+                        <div style="margin-top: 1rem; color: var(--accent-yellow);">🚧 ETA: September 2025</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">2+</div>
-                        <div class="stat-label">Years in Cybersecurity</div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🦠</div>
+                        <h3>Malware Family Analysis: Emotet Evolution</h3>
+                        <p><strong>In Progress:</strong> Comprehensive analysis of Emotet's latest variants, including static analysis, dynamic behavior, and detection signatures.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Ghidra</span>
+                            <span class="tag">x64dbg</span>
+                            <span class="tag">YARA</span>
+                            <span class="tag">Cuckoo</span>
+                        </div>
+                        <div style="margin-top: 1rem; color: var(--accent-blue);">⏳ 70% Complete</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">10+</div>
-                        <div class="stat-label">Custom Tools Built</div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🏹</div>
+                        <h3>Custom Sigma Rules for Living Off The Land</h3>
+                        <p><strong>Recently Published:</strong> Detection rules for identifying abuse of legitimate Windows utilities in post-exploitation scenarios.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Sigma</span>
+                            <span class="tag">PowerShell</span>
+                            <span class="tag">WMI</span>
+                        </div>
+                        <div style="margin-top: 1rem; color: var(--accent-green);">✅ Published</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">24/7</div>
-                        <div class="stat-label">Learning Mindset</div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🌐</div>
+                        <h3>Network Traffic Analysis: C2 Communications</h3>
+                        <p><strong>Planned:</strong> Deep packet inspection techniques for identifying covert command and control channels in encrypted traffic.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Wireshark</span>
+                            <span class="tag">Zeek</span>
+                            <span class="tag">ML Classification</span>
+                        </div>
+                        <div style="margin-top: 1rem; color: var(--text-muted);">📅 Q4 2025</div>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">☁️</div>
+                        <h3>Cloud-Native Threat Hunting</h3>
+                        <p><strong>Research Phase:</strong> Developing hunting methodologies for containerized environments and serverless architectures.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Kubernetes</span>
+                            <span class="tag">Docker</span>
+                            <span class="tag">AWS CloudTrail</span>
+                        </div>
+                        <div style="margin-top: 1rem; color: var(--accent-purple);">🔬 Research</div>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">⚡</div>
+                        <h3>Real-Time Threat Intelligence Integration</h3>
+                        <p><strong>Development:</strong> Automated framework for enriching security events with contextual threat intelligence from multiple feeds.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">STIX/TAXII</span>
+                            <span class="tag">APIs</span>
+                        </div>
+                        <div style="margin-top: 1rem; color: var(--accent-red);">🛠️ In Development</div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="about-cta">
-                <p class="cta-text">Ready to secure your digital assets?</p>
-                <div class="cta-buttons">
-                    <a href="writeups.html" class="cta-button secondary">View My Work</a>
-                    <a href="mailto:contact@0xgrooted.dev" class="cta-button primary">Get In Touch</a>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <div class="terminal-control"></div>
+                            <div class="terminal-control"></div>
+                            <div class="terminal-control"></div>
+                        </div>
+                        0xGrooted@research:~/writeups$
+                    </div>
+                    <div class="terminal-content">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">┌──(0xgrooted㉿research)-[~/writeups]</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">└─$</span> <span class="terminal-command">find . -name "*.md" | head -10</span>
+                        </div>
+                        <div class="terminal-line">./malware_analysis/emotet_2025_variant.md</div>
+                        <div class="terminal-line">./detection_rules/sigma_lolbins.md</div>
+                        <div class="terminal-line">./threat_hunting/apt_behavioral_analysis.md</div>
+                        <div class="terminal-line">./network_analysis/c2_detection_techniques.md</div>
+                        <div class="terminal-line">./cloud_security/k8s_threat_hunting.md</div>
+                        <div class="terminal-line">./automation/threat_intel_integration.md</div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">└─$</span> <span class="terminal-command">git status</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00ff88;">On branch main</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #fdcb6e;">Changes to be committed:</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00d4ff;">  modified:   emotet_2025_variant.md</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #00ff88;">  new file:   sigma_lolbins.md</span>
+                        </div>
+                    </div>
                 </div>
+            </section>
+
+            <!-- Certificates Section -->
+            <section id="certificates" class="section">
+                <div class="hero">
+                    <h1>Certification Journey</h1>
+                    <p>Strategic progression through industry-recognized cybersecurity certifications</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Planned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">65</div>
+                        <div class="stat-label">Progress %</div>
+                    </div>
+                </div>
+
+                <div class="cert-category">
+                    <h3>🔵 Blue Team Specialization</h3>
+                    <div class="cert-list">
+                        <div class="cert-item">
+                            <div class="cert-status in-progress"></div>
+                            <div>
+                                <strong>Blue Team Level 1 (BTL1)</strong><br>
+                                <small>Status: 80% Complete - Taking exam September 2025</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>Blue Team Level 2 (BTL2)</strong><br>
+                                <small>Status: Planned Q1 2026</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>GCIH (GIAC Certified Incident Handler)</strong><br>
+                                <small>Status: Enrolled - Starting Q4 2025</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>GCIA (GIAC Certified Intrusion Analyst)</strong><br>
+                                <small>Status: Planned Q2 2026</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cert-category">
+                    <h3>🏗️ Foundation Certifications</h3>
+                    <div class="cert-list">
+                        <div class="cert-item">
+                            <div class="cert-status in-progress"></div>
+                            <div>
+                                <strong>CompTIA Security+</strong><br>
+                                <small>Status: Studying - Exam scheduled August 2025</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>CompTIA CySA+</strong><br>
+                                <small>Status: Planned Q4 2025</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>CompTIA CASP+</strong><br>
+                                <small>Status: Long-term Goal 2027</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cert-category">
+                    <h3>🔍 Specialized Skills</h3>
+                    <div class="cert-list">
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>GREM (Reverse Engineering Malware)</strong><br>
+                                <small>Status: Target Q1 2026</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>GCFA (Computer Forensic Analyst)</strong><br>
+                                <small>Status: Target Q2 2026</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>OSCP (Offensive Security)</strong><br>
+                                <small>Status: Future Goal - Know thy enemy</small>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-status planned"></div>
+                            <div>
+                                <strong>CISSP (Management Level)</strong><br>
+                                <small>Status: 2027 Target</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card fade-in">
+                        <h3>📚 Current Study Plan</h3>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Security+ Prep</span>
+                                <span class="skill-level">85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">BTL1 Labs</span>
+                                <span class="skill-level">80%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="80%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">GCIH Prep</span>
+                                <span class="skill-level">15%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-width="15%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <h3>🎯 Certification Strategy</h3>
+                        <ul>
+                            <li><strong>Foundation First:</strong> Security+ for baseline knowledge</li>
+                            <li><strong>Practical Focus:</strong> BTL1/BTL2 for hands-on skills</li>
+                            <li><strong>SANS Deep Dive:</strong> GIAC certs for specialized expertise</li>
+                            <li><strong>Leadership Path:</strong> CISSP for management readiness</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <h3>💡 Study Resources</h3>
+                        <ul>
+                            <li>Security Blue Team Academy</li>
+                            <li>SANS training courses</li>
+                            <li>Professor Messer Security+</li>
+                            <li>Cybrary practical labs</li>
+                            <li>TryHackMe Blue Team path</li>
+                            <li>Custom home lab scenarios</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notes Section -->
+            <section id="notes" class="section">
+                <div class="hero">
+                    <h1>Knowledge Base</h1>
+                    <p>Curated collection of security references, methodologies, and research notes</p>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card fade-in">
+                        <div class="card-icon">📊</div>
+                        <h3>SIEM & Analytics</h3>
+                        <ul>
+                            <li><strong>Splunk SPL Mastery:</strong> Advanced search commands and statistical functions</li>
+                            <li><strong>Elastic Stack:</strong> Query DSL and aggregations for threat hunting</li>
+                            <li><strong>Sigma Rules:</strong> Universal detection rule format and conversion</li>
+                            <li><strong>KQL Queries:</strong> Microsoft Sentinel hunting queries</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🔍</div>
+                        <h3>Threat Hunting</h3>
+                        <ul>
+                            <li><strong>MITRE ATT&CK:</strong> Technique mapping and hunting hypotheses</li>
+                            <li><strong>Hunting Methodologies:</strong> Intelligence-driven and behavioral approaches</li>
+                            <li><strong>IOC Development:</strong> Creating actionable indicators from analysis</li>
+                            <li><strong>Hunt Automation:</strong> Scripted hunting workflows and alerts</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🖥️</div>
+                        <h3>Windows Internals</h3>
+                        <ul>
+                            <li><strong>Event Log Analysis:</strong> Security, System, and Application logs</li>
+                            <li><strong>Registry Forensics:</strong> Persistence mechanisms and artifacts</li>
+                            <li><strong>Process Analysis:</strong> Detection of process hollowing and injection</li>
+                            <li><strong>PowerShell Security:</strong> Script block logging and AMSI bypass detection</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🐧</div>
+                        <h3>Linux Security</h3>
+                        <ul>
+                            <li><strong>Log Analysis:</strong> Syslog, auth.log, and application logs</li>
+                            <li><strong>File System Monitoring:</strong> Auditd and file integrity monitoring</li>
+                            <li><strong>Network Security:</strong> iptables, netstat, and traffic analysis</li>
+                            <li><strong>Container Security:</strong> Docker and Kubernetes security monitoring</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🌐</div>
+                        <h3>Network Analysis</h3>
+                        <ul>
+                            <li><strong>Wireshark Mastery:</strong> Protocol analysis and traffic reconstruction</li>
+                            <li><strong>Zeek/Bro Logs:</strong> Network metadata analysis and scripting</li>
+                            <li><strong>DNS Security:</strong> Tunneling detection and malicious domain analysis</li>
+                            <li><strong>Flow Analysis:</strong> NetFlow/sFlow for behavioral analysis</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card fade-in">
+                        <div class="card-icon">🦠</div>
+                        <h3>Malware Analysis</h3>
+                        <ul>
+                            <li><strong>Static Analysis:</strong> PE structure, strings, and signature analysis</li>
+                            <li><strong>Dynamic Analysis:</strong> Sandbox execution and behavioral monitoring</li>
+                            <li><strong>YARA Rules:</strong> Custom signature development and optimization</li>
+                            <li><strong>Reverse Engineering:</strong> Assembly analysis and code reconstruction</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <div class="terminal-control"></div>
+                            <div class="terminal-control"></div>
+                            <div class="terminal-control"></div>
+                        </div>
+                        0xGrooted@knowledge:~/notes$
+                    </div>
+                    <div class="terminal-content">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">┌──(0xgrooted㉿knowledge)-[~/notes]</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">└─$</span> <span class="terminal-command">tree -L 3</span>
+                        </div>
+                        <div class="terminal-line">.</div>
+                        <div class="terminal-line">├── <span style="color: #00d4ff;">siem/</span></div>
+                        <div class="terminal-line">│   ├── splunk_advanced_searches.md</div>
+                        <div class="terminal-line">│   ├── elastic_threat_hunting.md</div>
+                        <div class="terminal-line">│   ├── sigma_rules_collection/</div>
+                        <div class="terminal-line">│   └── kql_sentinel_queries.md</div>
+                        <div class="terminal-line">├── <span style="color: #00d4ff;">threat_hunting/</span></div>
+                        <div class="terminal-line">│   ├── mitre_attack_mapping.md</div>
+                        <div class="terminal-line">│   ├── hunting_hypotheses/</div>
+                        <div class="terminal-line">│   ├── ioc_development.md</div>
+                        <div class="terminal-line">│   └── automated_hunting.py</div>
+                        <div class="terminal-line">├── <span style="color: #00d4ff;">windows/</span></div>
+                        <div class="terminal-line">│   ├── event_log_reference.md</div>
+                        <div class="terminal-line">│   ├── registry_artifacts.md</div>
+                        <div class="terminal-line">│   ├── powershell_detection.md</div>
+                        <div class="terminal-line">│   └── process_monitoring.md</div>
+                        <div class="terminal-line">├── <span style="color: #00d4ff;">network/</span></div>
+                        <div class="terminal-line">│   ├── wireshark_filters.md</div>
+                        <div class="terminal-line">│   ├── zeek_analysis.md</div>
+                        <div class="terminal-line">│   ├── dns_investigations.md</div>
+                        <div class="terminal-line">│   └── flow_analysis.md</div>
+                        <div class="terminal-line">└── <span style="color: #00d4ff;">malware/</span></div>
+                        <div class="terminal-line">    ├── static_analysis_toolkit.md</div>
+                        <div class="terminal-line">    ├── dynamic_analysis_setup.md</div>
+                        <div class="terminal-line">    ├── yara_rules/</div>
+                        <div class="terminal-line">    └── reverse_engineering.md</div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">└─$</span> <span class="terminal-command">wc -l **/*.md | tail -5</span>
+                        </div>
+                        <div class="terminal-line">   89 windows/process_monitoring.md</div>
+                        <div class="terminal-line">  156 network/flow_analysis.md</div>
+                        <div class="terminal-line">  203 malware/reverse_engineering.md</div>
+                        <div class="terminal-line"> 2847 total</div>
+                        <div class="terminal-line">
+                            <span style="color: #00ff88;">[+] Knowledge base contains 2,847 lines of documentation</span>
+                        </div>
+                                                <div class="terminal-line">
+                            <span class="terminal-prompt">└─$</span> <span class="terminal-command">exit</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span style="color: #fdcb6e;">Session closed. Stay curious. Stay blue.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools & Labs Section -->
+            <section id="tools" class="section">
+                <div class="hero">
+                    <h1>Tools & Labs</h1>
+                    <p>Custom scripts, detection engineering labs, and open-source blue team utilities</p>
+                </div>
+                <div class="cards-grid">
+                    <div class="card fade-in">
+                        <div class="card-icon">🛠️</div>
+                        <h3>SIEM Rule Generator</h3>
+                        <p>Automate the creation of detection rules for Splunk, Elastic, and Sentinel. Supports Sigma conversion and custom mapping.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Sigma</span>
+                            <span class="tag">Splunk</span>
+                        </div>
+                        <a href="#" class="cta-btn secondary" style="margin-top:1rem;">View on GitHub</a>
+                    </div>
+                    <div class="card fade-in">
+                        <div class="card-icon">🔗</div>
+                        <h3>Threat Intel Enrichment API</h3>
+                        <p>RESTful API for enriching security events with threat intelligence from multiple feeds. Includes IOC lookups and context scoring.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Flask</span>
+                            <span class="tag">APIs</span>
+                            <span class="tag">Threat Intel</span>
+                        </div>
+                        <a href="#" class="cta-btn secondary" style="margin-top:1rem;">View on GitHub</a>
+                    </div>
+                    <div class="card fade-in">
+                        <div class="card-icon">🧪</div>
+                        <h3>Detection Engineering Lab</h3>
+                        <p>Virtual lab environment for testing detection rules, simulating attacks, and validating blue team controls.</p>
+                        <div class="tool-tags">
+                            <span class="tag">Vagrant</span>
+                            <span class="tag">Ansible</span>
+                            <span class="tag">Atomic Red Team</span>
+                        </div>
+                        <a href="#" class="cta-btn secondary" style="margin-top:1rem;">Lab Guide</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="section">
+                <div class="hero">
+                    <h1>Contact</h1>
+                    <p>Let's connect! Reach out for collaboration, questions, or opportunities.</p>
+                </div>
+                <form id="contactForm" autocomplete="off">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required />
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required />
+
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+
+                    <button type="submit" class="cta-btn primary">Send Message</button>
+                    <p id="formStatus" aria-live="polite"></p>
+                </form>
+                <div style="margin-top:2rem;text-align:center;">
+                    <a href="https://github.com/yourusername" target="_blank" aria-label="GitHub" class="cta-btn secondary" style="margin-right:1rem;">GitHub</a>
+                    <a href="https://linkedin.com/in/yourusername" target="_blank" aria-label="LinkedIn" class="cta-btn secondary">LinkedIn</a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container" style="text-align:center;">
+            <p>&copy; 2025 0xGrooted (Mark Moore). All rights reserved.</p>
+            <div class="footer-social">
+                <a href="https://github.com/yourusername" target="_blank" aria-label="GitHub"><img src="github.svg" alt="GitHub"></a>
+                <a href="https://linkedin.com/in/yourusername" target="_blank" aria-label="LinkedIn"><img src="linkedin.svg" alt="LinkedIn"></a>
             </div>
         </div>
-    </section>
+    </footer>
 
-    <!-- Modal -->
-    <div id="timelineModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <p id="modalDate"></p>
-            <p id="modalDescription"></p>
-        </div>
-    </div>
-
+    <!-- Scripts -->
     <script>
-        // =================== TIMELINE DATA ===================
-        const timelineData = [
-    {
-        date: "2020",
-        title: "Silver & Gold Duke of Edinburgh",
-        description: "Built leadership and resilience through the Duke of Edinburgh awards.",
-        fullDescription: "Completed both the Silver and Gold levels of the Duke of Edinburgh program. These experiences developed my problem-solving mindset and team collaboration—traits that would later prove invaluable in cybersecurity and engineering."
-    },
-    {
-        date: "2021",
-        title: "CyberFirst Advanced Course",
-        description: "Where my interest in cybersecurity truly began.",
-        fullDescription: "Although I had been coding for years, the CyberFirst Advanced Course opened my eyes to the depth and complexity of cybersecurity. From encryption to ethical hacking, I found myself drawn to this world beyond software engineering."
-    },
-    {
-        date: "2022-2023",
-        title: "Balancing Code and Curiosity",
-        description: "Explored Hack The Box and TryHackMe while focusing on software engineering projects.",
-        fullDescription: "Signed up to platforms like Hack The Box and TryHackMe, solving occasional challenges while mainly focused on deepening my knowledge of software development. This period helped me grow as a well-rounded technologist with dual interests in software and security."
-    },
-    {
-        date: "2024",
-        title: "CTF Breakthrough",
-        description: "Started competing seriously in CTFs—placed 8th in MetaCTF.",
-        fullDescription: "2024 marked my entry into competitive Capture The Flag events. After grinding away at practice labs and challenge platforms, I secured 8th place in a MetaCTF competition. This fueled my confidence and pushed me to pursue cybersecurity more seriously."
-    },
-    {
-        date: "2025",
-        title: "The Professional Path",
-        description: "Preparing for CPTS and OSCP certifications to level up professionally.",
-        fullDescription: "I'm currently dedicating myself to certification prep, specifically for the CPTS and OSCP exams. Simultaneously, I'm refining my skills through hands-on labs, developing tools, and documenting everything—from writeups to proof-of-concepts—to build a strong public portfolio and transition into professional penetration testing."
-    }
-];
+        // Mobile menu toggle
+        document.querySelector('.menu-toggle').onclick = function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        };
 
-
-        // =================== INITIALIZATION ===================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Hide loading screen after 3 seconds
-            setTimeout(() => {
-                document.getElementById('loadingScreen').classList.add('hidden');
-            }, 3000);
-
-            // Generate animated particles
-            generateParticles();
-            
-            // Generate timeline
-            generateTimeline();
-            
-            // Setup modal
-            setupModal();
-            
-            // Setup scroll animations
-            setupScrollAnimations();
-        });
-
-        // =================== PARTICLE ANIMATION ===================
-        function generateParticles() {
-            const bgAnimation = document.getElementById('bgAnimation');
-            const particleCount = 50;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                bgAnimation.appendChild(particle);
-            }
-        }
-
-        // =================== TIMELINE GENERATION ===================
-        function generateTimeline() {
-            const timeline = document.getElementById('timeline');
-            
-            timelineData.forEach((item, index) => {
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'timeline-item';
-                timelineItem.style.animationDelay = (index * 0.1) + 's';
-                
-                timelineItem.innerHTML = `
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content" onclick="openModal(${index})">
-                        <div class="timeline-date">${item.date}</div>
-                        <h3 class="timeline-title">${item.title}</h3>
-                        <p class="timeline-description">${item.description}</p>
-                    </div>
-                `;
-                
-                timeline.appendChild(timelineItem);
-            });
-        }
-
-        // =================== MODAL FUNCTIONALITY ===================
-        function setupModal() {
-            const modal = document.getElementById('timelineModal');
-            const closeBtn = document.getElementsByClassName('close')[0];
-            
-            closeBtn.onclick = function() {
-                modal.style.display = 'none';
-            }
-            
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
+        // Section navigation
+        document.querySelectorAll('.nav-link, .cta-btn').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const section = this.dataset.section;
+                if (section) {
+                    e.preventDefault();
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                    document.getElementById(section).classList.add('active');
+                    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                    document.querySelectorAll('.nav-link[data-section="' + section + '"]').forEach(n => n.classList.add('active'));
+                    window.scrollTo({top: 0, behavior: 'smooth'});
                 }
-            }
-        }
-
-        function openModal(index) {
-            const modal = document.getElementById('timelineModal');
-            const data = timelineData[index];
-            
-            document.getElementById('modalTitle').textContent = data.title;
-            document.getElementById('modalDate').textContent = data.date;
-            document.getElementById('modalDescription').textContent = data.fullDescription;
-            
-            modal.style.display = 'block';
-        }
-
-        // =================== SMOOTH SCROLLING ===================
-        function scrollToTimeline() {
-            document.querySelector('.timeline-section').scrollIntoView({
-                behavior: 'smooth'
             });
-        }
-
-        // =================== SCROLL ANIMATIONS ===================
-        function setupScrollAnimations() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animationPlayState = 'running';
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.timeline-item').forEach(item => {
-                observer.observe(item);
-            });
-        }
-
-        // =================== NAVBAR SCROLL EFFECT ===================
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 100) {
-                navbar.style.background = 'rgba(5, 5, 5, 0.95)';
-            } else {
-                navbar.style.background = 'rgba(10, 10, 10, 0.9)';
-            }
         });
-    </script>
-</body>
-</html>
+
+        // Animated stats counter
+        document.querySelectorAll('.stat-number').forEach(el => {
+            const update = () => {
+                const target = +el.dataset.target;
+                let count = +el.innerText.replace(/\D/g, '') || 0;
+                const inc = Math.ceil(target / 40);
+                if (count < target) {
+                    el.innerText = count + inc;
+                    setTimeout(update, 30);
+                } else {
+                    el.innerText = target;
+                }
+            };
+            update();
+        });
+
+        // Animate skill bars
+        document.querySelectorAll('.skill-progress').forEach(bar => {
+            bar.style.width = bar.dataset.width;
+        });
+
+        // Fade-in on scroll
+        function revealOnScroll() {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 60) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+
+        // Contact form (demo only)
+        document.getElementById('contactForm').onsubmit = function(e) {
+            e.preventDefault();
+            document.getElementById('formStatus').innerText = "Thank you! Your message has been sent.";
+            this.reset();
+        };
