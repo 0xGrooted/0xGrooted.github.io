@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift Filter Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .rules-display {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .input-section, .output-section {
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+        }
+
+        .output {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        .output.has-content {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-color: #667eea;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #abd5ff;
+        }
+
+        .example-section {
+            background: rgba(247, 250, 252, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .example-input {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            margin: 10px 0;
+            white-space: pre-line;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+            
+            button {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Shift Filter Tool</h1>
+        
+        <div class="rules-display">
+            <strong>Your Preferences:</strong> Any 4-10 shifts • Friday any time • Saturday & Sunday any time • NO NDs ever
+        </div>
+        
+        <div class="input-section">
+            <h2><span class="icon">📥</span>Paste Shift Message</h2>
+            <textarea id="shiftInput" placeholder="Paste your shift message here...
+
+Example:
+Shifts available until 2nd October...
+Fri 12th 8-2
+Mon 15th 8-2, 4-10, ND, ND
+Tue 16th 8-2, 8-2, ND
+Thu 18th 8-2, ND
+Fri 19th 8-2
+Sat 20th 4-10
+Sun 21st ND
+Mon 22nd 8-2, 4-10"></textarea>
+            
+            <div class="button-group">
+                <button onclick="processShifts()">🔄 Process Shifts</button>
+                <button class="clear-btn" onclick="clearAll()">🗑️ Clear All</button>
+            </div>
+        </div>
+        
+        <div class="output-section">
+            <h2><span class="icon">📤</span>Your Shifts (Copy & Paste)</h2>
+            <div id="output" class="output">Processed shifts will appear here...</div>
+            <div class="button-group">
+                <button class="copy-btn" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+            </div>
+            <div id="status" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="example-section">
+            <h3>📝 How to Use</h3>
+            <ol style="margin: 15px 0; padding-left: 20px; line-height: 1.6;">
+                <li>Copy the shift message from WhatsApp</li>
+                <li>Paste it in the input box above</li>
+                <li>Click "Process Shifts"</li>
+                <li>Copy the filtered result and paste back to WhatsApp</li>
+            </ol>
+            
+            <h4>Example Input:</h4>
+            <div class="example-input">Shifts available until 2nd October…
+Fri 12th 8-2
+Mon 15th 8-2, 4-10, ND, ND
+Tue 16th 8-2, 8-2, ND
+Thu 18th 8-2, ND
+Fri 19th 8-2
+Sat 20th 4-10
+Sun 21st ND
+Mon 22nd 8-2, 4-10</div>
+            
+            <h4>Example Output:</h4>
+            <div class="example-input" style="background: #155724; color: #d4edda;">I'll take: Fri 12th 8-2, Mon 15th 4-10, Fri 19th 8-2, Sat 20th 4-10, Mon 22nd 4-10</div>
+        </div>
+    </div>
+
+    <script>
+        function processShifts() {
+            const input = document.getElementById('shiftInput').value.trim();
+            const output = document.getElementById('output');
+            const status = document.getElementById('status');
+            
+            if (!input) {
+                showStatus('Please paste a shift message first!', 'error');
+                return;
+            }
+            
+            try {
+                const wantedShifts = parseShifts(input);
+                
+                if (wantedShifts.length === 0) {
+                    output.textContent = "No shifts match your preferences 😔";
+                    output.className = 'output';
+                    showStatus('No matching shifts found', 'info');
+                } else {
+                    const result = "I'll take: " + wantedShifts.join(', ');
+                    output.textContent = result;
+                    output.className = 'output has-content';
+                    showStatus(`Found ${wantedShifts.length} matching shift${wantedShifts.length > 1 ? 's' : ''}!`, 'success');
+                }
+            } catch (error) {
+                output.textContent = "Error processing shifts. Please check the format.";
+                output.className = 'output';
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+        
+        function parseShifts(message) {
+            const wantedShifts = [];
+            const lines = message.split('\n');
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line || line.toLowerCase().includes('shifts available')) {
+                    continue;
+                }
+                
+                // Parse lines like "Fri 12th 8-2" or "Mon 15th 8-2, 4-10, ND, ND"
+                const match = line.match(/^(\w+)\s+(\d+\w*)\s+(.+)$/);
+                if (!match) continue;
+                
+                const day = match[1];
+                const date = match[2];
+                const timesStr = match[3];
+                
+                // Split the times and process each one
+                const times = timesStr.split(',').map(t => t.trim());
+                
+                for (let time of times) {
+                    if (shouldTakeShift(day, time)) {
+                        wantedShifts.push(`${day} ${date} ${time}`);
+                    }
+                }
+            }
+            
+            return wantedShifts;
+        }
+        
+        function shouldTakeShift(day, time) {
+            // NO NDs ever
+            if (time.toUpperCase() === 'ND') {
+                return false;
+            }
+            
+            // Any 4-10 shifts
+            if (time === '4-10') {
+                return true;
+            }
+            
+            // Friday any time (except ND which we already filtered out)
+            if (day.toLowerCase() === 'fri' || day.toLowerCase() === 'friday') {
+                return true;
+            }
+            
+            // Saturday any time (except ND)
+            if (day.toLowerCase() === 'sat' || day.toLowerCase() === 'saturday') {
+                return true;
+            }
+            
+            // Sunday any time (except ND)
+            if (day.toLowerCase() === 'sun' || day.toLowerCase() === 'sunday') {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        function copyToClipboard() {
+            const output = document.getElementById('output');
+            const text = output.textContent;
+            
+            if (!text || text.includes('will appear here') || text.includes('Error')) {
+                showStatus('Nothing to copy! Process shifts first.', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('Copied to clipboard! 📋✅', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showStatus('Copied to clipboard! 📋✅', 'success');
+            });
+        }
+        
+        function clearAll() {
+            document.getElementById('shiftInput').value = '';
+            document.getElementById('output').textContent = 'Processed shifts will appear here...';
+            document.getElementById('output').className = 'output';
+            hideStatus();
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+        
+        function hideStatus() {
+            const status = document.getElementById('status');
+            status.style.display = 'none';
+        }
+        
+        // Auto-process when text is pasted
+        document.getElementById('shiftInput').addEventListener('paste', function() {
+            setTimeout(() => {
+                processShifts();
+            }, 100);
+        });
+        
+        // Enter key shortcut
+        document.getElementById('shiftInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                processShifts();
+            }
+        });
+    </script>
+</body>
+</html>
