@@ -33,6 +33,10 @@
             --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.1);
         }
 
+        html, body {
+            min-height: 100%;
+        }
+
         body {
             font-family: 'JetBrains Mono', monospace;
             background: var(--bg-primary);
@@ -44,10 +48,11 @@
 
         /* Animated background */
         .bg-animation {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
+            min-height: 100%;
             height: 100%;
             z-index: -1;
             background: 
@@ -64,10 +69,11 @@
 
         /* Matrix rain effect */
         .matrix-bg {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
+            min-height: 100%;
             height: 100%;
             z-index: -2;
             opacity: 0.05;
@@ -309,7 +315,7 @@
                     <li><a href="writeups.html" class="nav-link">Writeups</a></li>
                     <li><a href="certificates.html" class="nav-link active">Certificates</a></li>
                     <li><a href="notes.html" class="nav-link">Notes</a></li>
-                    <li><a href="tools.html" class="nav-link">Tools & Labs</a></li>
+                    <li><a href="projects.html" class="nav-link">Projects</a></li>
                     <li><a href="contact.html" class="nav-link">Contact</a></li>
                 </ul>
                 <div class="status-indicator">
@@ -330,8 +336,9 @@
                 <div class="certificates-container">
                     <div class="certificate-card completed">
                         <h3>CompTIA Security+</h3>
-                        <p class="status">Status: Completed</p>
+                        <p class="status">Status: Completed 19/08/2025</p>
                         <p>This certification validates the baseline skills necessary to perform core security functions and pursue a career in cybersecurity.</p>
+                        <img src="resources/ComptiaSec+.png" alt="CompTIA Security+ Certificate" style="margin-top:1rem; max-width:100%; border-radius:8px;">
                     </div>
 
                     <div class="certificate-card in-progress">
