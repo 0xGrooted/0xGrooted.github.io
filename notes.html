@@ -32,6 +32,20 @@
             --gradient-card: linear-gradient(145deg, rgba(22, 33, 62, 0.8), rgba(15, 52, 96, 0.4));
             --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.1);
         }
+        html, body {
+        min-height: 100%;
+        }
+
+        .bg-animation,
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100%;
+            height: 100%;
+            z-index: -1; /* or -2 for .matrix-bg */
+        }
 
         body {
             font-family: 'JetBrains Mono', monospace;
@@ -438,7 +452,7 @@
                     <li><a href="writeups.html" class="nav-link">Writeups</a></li>
                     <li><a href="certificates.html" class="nav-link">Certificates</a></li>
                     <li><a href="notes.html" class="nav-link active">Notes</a></li>
-                    <li><a href="tools.html" class="nav-link">Tools & Labs</a></li>
+                    <li><a href="projects.html" class="nav-link">Projects</a></li>
                     <li><a href="contact.html" class="nav-link">Contact</a></li>
                 </ul>
                 <div class="status-indicator">
@@ -459,10 +473,10 @@
 
                 <div class="filter-buttons">
                     <button class="filter-btn active" data-category="all">All</button>
-                    <button class="filter-btn" data-category="reconnaissance">Reconnaissance</button>
-                    <button class="filter-btn" data-category="privilege-escalation">Privilege Escalation</button>
-                    <button class="filter-btn" data-category="web-exploitation">Web Exploitation</button>
-                    <button class="filter-btn" data-category="misc">Misc</button>
+                    <button class="filter-btn" data-category="htb">HTB</button>
+                    <button class="filter-btn" data-category="thm">THM</button>
+                    <button class="filter-btn" data-category="malware">Malware</button>
+                    <button class="filter-btn" data-category="ctf">CTF</button>
                 </div>
 
                 <div class="notes-grid" id="notes-container">
@@ -488,9 +502,9 @@
             const notesData = [
                 {
                     id: 1,
-                    title: "Nmap Scan Cheatsheet",
-                    category: "reconnaissance",
-                    summary: "Essential Nmap commands for quick network enumeration during reconnaissance phases.",
+                    title: "HTB - Nmap Scan Cheatsheet",
+                    category: "htb",
+                    summary: "Essential Nmap commands for quick network enumeration on Hack The Box machines.",
                     details: "Nmap is a powerful tool for network discovery and security auditing. The following commands cover basic to advanced scans, helping to identify open ports, services, and vulnerabilities.",
                     code: [
                         { text: "Aggressive TCP SYN Scan with OS and service detection.", code: "nmap -A -v -T4 {target_ip}" },
@@ -500,9 +514,9 @@
                 },
                 {
                     id: 2,
-                    title: "Linux Privilege Escalation",
-                    category: "privilege-escalation",
-                    summary: "A simple command to check for SUID/SGID binaries that can be exploited for privilege escalation.",
+                    title: "THM - Linux Privilege Escalation",
+                    category: "thm",
+                    summary: "A simple command to check for SUID/SGID binaries that can be exploited for privilege escalation on TryHackMe boxes.",
                     details: "SUID (Set User ID) and SGID (Set Group ID) bits allow a user to execute a file with the permissions of the file's owner or group. Misconfigured binaries with these permissions are a common vector for local privilege escalation. This command helps to find them.",
                     code: [
                         { text: "Find files with SUID/SGID bits set.", code: "find / -perm /4000 -type f 2>/dev/null" },
@@ -511,9 +525,9 @@
                 },
                 {
                     id: 3,
-                    title: "Python Web Server",
-                    category: "misc",
-                    summary: "A quick one-liner to start a simple HTTP server for file transfer.",
+                    title: "Malware - Python Web Server",
+                    category: "malware",
+                    summary: "A quick one-liner to start a simple HTTP server for file transfer during malware analysis.",
                     details: "When you need to quickly transfer files from a compromised machine to your attacking machine, a simple HTTP server is incredibly useful. This command uses Python's built-in module, which is available on most Linux systems.",
                     code: [
                         { text: "Start a server on port 8000.", code: "python3 -m http.server 8000" }
@@ -521,9 +535,9 @@
                 },
                 {
                     id: 4,
-                    title: "SQL Injection Payload",
-                    category: "web-exploitation",
-                    summary: "A common payload for testing for a blind SQL injection vulnerability.",
+                    title: "CTF - SQL Injection Payload",
+                    category: "ctf",
+                    summary: "A common payload for testing for a blind SQL injection vulnerability in CTF challenges.",
                     details: "SQL injection is a common web security vulnerability. This payload, known as a 'truthy' statement, is used in blind SQL injection attacks to determine if a vulnerable input field exists. If the query returns a different result (or the page behaves differently) compared to a 'falsey' statement, you've likely found a vulnerability.",
                     code: [
                         { text: "Common SQLi payload to bypass authentication.", code: "' or 1=1-- " }
@@ -531,9 +545,9 @@
                 },
                 {
                     id: 5,
-                    title: "Docker Container Info",
-                    category: "misc",
-                    summary: "Command to inspect a running Docker container's network and configuration details.",
+                    title: "Malware - Docker Container Info",
+                    category: "malware",
+                    summary: "Command to inspect a running Docker container's network and configuration details during malware analysis.",
                     details: "The `docker inspect` command provides a wealth of information about a container, including its IP address, mount points, environment variables, and more. This is crucial for understanding the container's security posture and potential weak points.",
                     code: [
                         { text: "Inspect a container by its ID or name.", code: "docker inspect {container_id}" }
@@ -541,9 +555,19 @@
                 },
                 {
                     id: 6,
-                    title: "Wireshark Filter for HTTP",
-                    category: "reconnaissance",
-                    summary: "A basic Wireshark display filter to capture only HTTP traffic.",
+                    title: "HTB - Wireshark Filter for HTTP",
+                    category: "htb",
+                    summary: "A basic Wireshark display filter to capture only HTTP traffic on Hack The Box.",
+                    details: "Wireshark is an essential tool for network analysis. Using display filters helps to quickly narrow down captured traffic to only what's relevant. This filter will show all HTTP and HTTP/2 protocol packets.",
+                    code: [
+                        { text: "Filter for all HTTP and HTTP/2 traffic.", code: "http or http2" }
+                    ]
+                },
+                {
+                    id: 6,
+                    title: "HTB - Wireshark Filter for HTTP",
+                    category: "htb",
+                    summary: "A basic Wireshark display filter to capture only HTTP traffic on Hack The Box.",
                     details: "Wireshark is an essential tool for network analysis. Using display filters helps to quickly narrow down captured traffic to only what's relevant. This filter will show all HTTP and HTTP/2 protocol packets.",
                     code: [
                         { text: "Filter for all HTTP and HTTP/2 traffic.", code: "http or http2" }
