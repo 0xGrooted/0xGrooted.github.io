@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>0xGrooted - Roadmap</title>
+    <title>0xGrooted - Projects</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&display=swap');
         
@@ -219,115 +219,82 @@
             max-width: 600px;
             margin: 1rem auto 0;
         }
-        
-        .roadmap-container {
-            position: relative;
-            padding: 2rem 0;
-        }
 
-        .roadmap-timeline {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .roadmap-timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--gradient-primary);
-            transform: translateX(-50%);
-        }
-
-        .roadmap-item {
-            position: relative;
+        /* Tools grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
             margin: 3rem 0;
-            animation: roadmapFadeIn 0.6s ease-out forwards;
-            opacity: 0;
         }
 
-        .roadmap-item:nth-child(odd) .roadmap-content {
-            margin-left: 0;
-            margin-right: 50%;
-            padding-right: 3rem;
-        }
-
-        .roadmap-item:nth-child(even) .roadmap-content {
-            margin-left: 50%;
-            margin-right: 0;
-            padding-left: 3rem;
-        }
-
-        .roadmap-content {
+        .tool-card {
             background: var(--gradient-card);
             border: 1px solid var(--border-glow);
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 2rem;
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .roadmap-content:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 212, 255, 0.2);
-        }
-
-        .roadmap-marker {
+        .tool-card::before {
+            content: '';
             position: absolute;
-            left: 50%;
-            top: 2rem;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-primary);
-            border-radius: 50%;
-            transform: translateX(-50%);
-            border: 4px solid var(--bg-primary);
-            box-shadow: 0 0 0 4px var(--accent-primary);
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
 
-        .roadmap-marker.completed {
-            background: var(--accent-green);
-            box-shadow: 0 0 0 4px var(--accent-green);
+        .tool-card:hover::before {
+            transform: scaleX(1);
         }
 
-        .roadmap-marker.current {
-            background: var(--accent-yellow);
-            box-shadow: 0 0 0 4px var(--accent-yellow);
-            animation: currentPulse 2s infinite;
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 212, 255, 0.15);
+            border-color: var(--accent-primary);
         }
 
-        @keyframes currentPulse {
-            0% { box-shadow: 0 0 0 4px var(--accent-yellow), 0 0 0 8px transparent; }
-            50% { box-shadow: 0 0 0 4px var(--accent-yellow), 0 0 0 20px rgba(253, 203, 110, 0.2); }
-            100% { box-shadow: 0 0 0 4px var(--accent-yellow), 0 0 0 8px transparent; }
+        .tool-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        @keyframes roadmapFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .roadmap-date {
+        .tool-card .tag {
+            background: var(--accent-secondary);
             color: var(--accent-primary);
-            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
 
-        .roadmap-title {
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .roadmap-description {
+        .tool-card p {
             color: var(--text-secondary);
+            margin-bottom: 1.5rem;
             font-size: 0.9rem;
-            line-height: 1.5;
+        }
+
+        .tool-card a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            margin-top: auto; /* Push the link to the bottom */
+        }
+
+        .tool-card a:hover {
+            color: var(--text-primary);
         }
 
         /* Fade-in on scroll */
@@ -369,17 +336,6 @@
                 from { opacity: 0; transform: translateY(-20px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-
-            .roadmap-timeline::before { left: 20px; }
-            .roadmap-marker { left: 20px; }
-
-            .roadmap-item:nth-child(odd) .roadmap-content,
-            .roadmap-item:nth-child(even) .roadmap-content {
-                margin-left: 50px;
-                margin-right: 0;
-                padding-left: 2rem;
-                padding-right: 1rem;
-            }
         }
     </style>
 </head>
@@ -393,11 +349,11 @@
                 <a href="index.html" class="logo">0xGrooted</a>
                 <ul class="nav-links">
                     <li><a href="index.html" class="nav-link">Home</a></li>
-                    <li><a href="roadmap.html" class="nav-link active">Roadmap</a></li>
+                    <li><a href="roadmap.html" class="nav-link">Roadmap</a></li>
                     <li><a href="writeups.html" class="nav-link">Writeups</a></li>
                     <li><a href="certificates.html" class="nav-link">Certificates</a></li>
                     <li><a href="notes.html" class="nav-link">Notes</a></li>
-                    <li><a href="projects.html" class="nav-link">Projects</a></li>
+                    <li><a href="projects.html" class="nav-link active">Projects</a></li>
                     <li><a href="contact.html" class="nav-link">Contact</a></li>
                 </ul>
                 <div class="status-indicator">
@@ -410,59 +366,37 @@
 
     <main>
         <div class="container">
-            <section id="roadmap-page">
+            <section id="tools-page">
                 <div class="section-header">
-                    <h2>My Roadmap</h2>
-                    <p>A look into my journey and the milestones I've completed, my current focus, and what's next on the horizon.</p>
+                    <h2>Tools & Labs</h2>
+                    <p>A list of my preferred defensive security tools and the virtual labs I use for continuous learning and practice.</p>
                 </div>
-                <div class="roadmap-container">
-                    <div class="roadmap-timeline">
-                        <div class="roadmap-item fade-in">
-                            <div class="roadmap-marker completed"></div>
-                            <div class="roadmap-content">
-                                <div class="roadmap-date">Q1 2024</div>
-                                <div class="roadmap-title">Foundations of Blue Teaming</div>
-                                <div class="roadmap-description">Mastered fundamental defensive security concepts, including network traffic analysis, log management, and threat intelligence basics. Completed introductory certifications.</div>
-                            </div>
-                        </div>
-                        <div class="roadmap-item fade-in">
-                            <div class="roadmap-marker completed"></div>
-                            <div class="roadmap-content">
-                                <div class="roadmap-date">Q2 2024</div>
-                                <div class="roadmap-title">SIEM & EDR Implementation</div>
-                                <div class="roadmap-description">Hands-on experience with SIEM platforms (Splunk, Elastic) and Endpoint Detection & Response (EDR) tools. Developed custom detection rules and dashboards.</div>
-                            </div>
-                        </div>
-                        <div class="roadmap-item fade-in">
-                            <div class="roadmap-marker current"></div>
-                            <div class="roadmap-content">
-                                <div class="roadmap-date">Q3 2024</div>
-                                <div class="roadmap-title">Advanced Threat Hunting</div>
-                                <div class="roadmap-description">Currently focusing on proactive threat hunting techniques, using frameworks like MITRE ATT&CK to hunt for signs of malicious activity within enterprise environments.</div>
-                            </div>
-                        </div>
-                        <div class="roadmap-item fade-in">
-                            <div class="roadmap-marker"></div>
-                            <div class="roadmap-content">
-                                <div class="roadmap-date">Q4 2024</div>
-                                <div class="roadmap-title">Cloud Security Defense</div>
-                                <div class="roadmap-description">Future plans include specializing in cloud security, with a focus on AWS and Azure security controls, and learning to defend against cloud-native attacks.</div>
-                            </div>
-                        </div>
-                        <div class="roadmap-item fade-in">
-                            <div class="roadmap-marker"></div>
-                            <div class="roadmap-content">
-                                <div class="roadmap-date">2025+</div>
-                                <div class="roadmap-title">Incident Response & Forensics</div>
-                                <div class="roadmap-description">Long-term goal to deepen expertise in incident response and digital forensics to effectively handle and investigate cyber security incidents from start to finish.</div>
-                            </div>
-                        </div>
+                <div class="tools-grid">
+                    <!-- Example Tool Card -->
+                    <div class="tool-card fade-in">
+                        <span class="tag">SIEM</span>
+                        <h3>Elastic Stack</h3>
+                        <p>Leveraging Elasticsearch, Logstash, and Kibana (ELK) for centralized log management, visualization, and advanced threat hunting.</p>
+                        <a href="#">Learn More &gt;</a>
+                    </div>
+                    <!-- Example Tool Card -->
+                    <div class="tool-card fade-in">
+                        <span class="tag">Lab Environment</span>
+                        <h3>Splunk Attack Range</h3>
+                        <p>A controlled environment for simulating attacks and developing custom detection rules for Splunk, based on MITRE ATT&CK.</p>
+                        <a href="#">Explore Lab &gt;</a>
+                    </div>
+                    <!-- Example Tool Card -->
+                    <div class="tool-card fade-in">
+                        <span class="tag">Threat Hunting</span>
+                        <h3>Sysmon</h3>
+                        <p>A powerful Windows system service that logs process creations, network connections, and changes to file creation time for forensic analysis.</p>
+                        <a href="#">View Config &gt;</a>
                     </div>
                 </div>
             </section>
         </div>
     </main>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Function to reveal elements on scroll
