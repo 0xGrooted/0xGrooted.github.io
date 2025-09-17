@@ -464,7 +464,7 @@
                     <li><a href="writeups.html" class="nav-link active">Writeups</a></li>
                     <li><a href="certificates.html" class="nav-link">Certificates</a></li>
                     <li><a href="notes.html" class="nav-link">Notes</a></li>
-                    <li><a href="tools.html" class="nav-link">Tools & Labs</a></li>
+                    <li><a href="projects.html" class="nav-link">Projects</a></li>
                     <li><a href="contact.html" class="nav-link">Contact</a></li>
                 </ul>
                 <div class="status-indicator">
@@ -490,6 +490,7 @@
                     <button class="filter-btn" data-category="forensics">Forensics</button>
                     <button class="filter-btn" data-category="crypto">Cryptography</button>
                     <button class="filter-btn" data-category="reversing">Reverse Engineering</button>
+                    <button class="filter-btn" data-category="malware">Malware</button>
                 </div>
 
                 <div class="writeups-grid" id="writeups-container">
@@ -552,7 +553,15 @@
                 "category": "reversing",
                 "summary": "Using `gdb` and `objdump` to reverse a stripped binary and find the flag in memory.",
                 "details": "### Introduction\nThis writeup focuses on reversing a simple stripped binary to find a hardcoded flag. A stripped binary has no symbol information, so we must rely on other tools.\n\n### Tools Used\n- `objdump` to disassemble the binary.\n- `gdb` for dynamic analysis.\n\n### Step 1: Disassembly\nFirst, we use `objdump -d a.out` to disassemble the binary and look for interesting function calls or patterns. We'll be looking for comparisons, `printf` calls, or calls to library functions that might handle flags.\n\n### Step 2: Debugging with `gdb`\nUsing `gdb`, we can set breakpoints at entry points and key locations, like right before a `printf` call. We can then inspect the registers and memory to find the flag. The command `x/s $rax` is often useful to inspect the contents of a register as a string."
-              }
+              },
+              {
+                "id": 6,
+                "title": "Malware Analysis of a Windows Executable",
+                "category": "malware",
+                "summary": "A comprehensive analysis of a Windows malware sample, including static and dynamic investigation, behavioral insights, and detection recommendations.",
+                "details": "### Introduction\nThis writeup documents the analysis of a suspicious Windows executable. The goal is to understand its behavior, persistence mechanisms, and potential impact on the system. The sample was analyzed in a controlled virtual machine to avoid contamination.\n\n### Tools Used\n- **Python** for automating file and log parsing.\n- **IDA Free / Ghidra** for static reverse engineering.\n- **Procmon & Process Explorer** to monitor system activity in real time.\n- **Wireshark** to capture and analyze network traffic.\n- **VirusTotal** and **Hybrid Analysis** for initial threat intelligence.\n\n### Step 1: Static Analysis\n- Inspected the PE headers and sections to identify suspicious imports, such as `CreateRemoteThread`, `VirtualAlloc`, and `WinExec`.\n- Extracted strings to find embedded URLs, IPs, and file paths.\n- Verified digital signatures (if present) and metadata for anomalies.\n\n### Step 2: Dynamic Analysis\n- Executed the sample in an isolated VM and monitored behavior using Procmon:\n  - Observed registry modifications to establish persistence (e.g., `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run`).\n  - Tracked file system changes, including dropped DLLs and log files.\n  - Captured outbound network traffic; identified beaconing patterns to a remote server.\n\n### Step 3: Behavioral Insights\n- The malware attempted privilege escalation using vulnerable system calls.\n- Attempted to disable Windows Defender and security logging.\n- Collected basic system information and exfiltrated it over HTTP.\n\n### Step 4: Mitigation & Recommendations\n- Quarantine affected systems and block known C2 server IPs.\n- Update antivirus signatures and enable heuristic scanning.\n- Monitor endpoint logs for signs of repeated persistence attempts.\n- Educate users on phishing and malicious attachments, as infection vector was a social engineering email.\n\n### Summary\nThrough this analysis, I gained hands-on experience in:\n- Reverse engineering Windows executables.\n- Using static and dynamic analysis tools.\n- Understanding malware persistence, network behavior, and defensive countermeasures.\n- Producing detailed, actionable threat reports for security teams."
+            }
+
             ];
 
             // Simple Markdown rendering function for the solution content
@@ -654,4 +663,5 @@
     </script>
 </body>
 </html>
+````
 
