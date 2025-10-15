@@ -1,126 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>0xGrooted Portfolio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mark M | Software Engineering Student</title>
+    <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1a0000, #000000, #330000);
-            color: #f0f0f0;
         }
-        .mono-font {
-            font-family: 'Roboto Mono', monospace;
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .timeline-item {
-            position: relative;
-            padding-bottom: 3.5rem; 
-            padding-left: 2.5rem; 
-        }
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-        /* The vertical line */
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 0.5rem;
-            top: 0.5rem;
-            width: 2px;
-            height: 100%;
-            background-color: #dc2626; /* red-600 */
-        }
-        /* Stop the line for the last item */
-        .timeline-item:last-child::before {
-            display: none;
-        }
-        /* The dot */
-        .timeline-item::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0.5rem;
-            width: 1rem;
-            height: 1rem;
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            border: 3px solid #dc2626; /* red-600 */
-            z-index: 10;
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out forwards;
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
+    <div id="root"></div>
 
-    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div class="w-full max-w-4xl mx-auto bg-black bg-opacity-50 backdrop-blur-md rounded-2xl shadow-2xl shadow-red-500/20 overflow-hidden">
-            <div class="p-8 md:p-12">
-                <!-- Header -->
-                <header class="text-center mb-12">
-                    <h1 class="mono-font text-4xl md:text-6xl font-bold tracking-wider text-red-500">
-                        0xGrooted
-                    </h1>
-                    <p class="mt-2 text-lg text-gray-300">Mark Moore</p>
-                </header>
+    <!-- React and Babel CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-                <!-- About Me Section -->
-                <section id="about" class="mb-12">
-                    <h2 class="text-2xl font-bold mb-4 border-b-2 border-red-600 pb-2 text-gray-100">About Me</h2>
-                    <p class="text-gray-300 leading-relaxed">
-                        I am an aspiring Software Engineer with a deep passion for Cybersecurity, specifically focusing on Security Engineering & Research. My hands-on experience includes leading Capture the Flag (CTF) events, consistently placing in the top percentiles in competitive platforms like TryHackMe and Meta's CTF tournaments, and contributing directly to the Metasploit Framework. I am driven to leverage these skills to build secure, efficient, and innovative software solutions, and to contribute meaningfully to the fight against cybercrime.
-                    </p>
-                </section>
+    <script type="text/babel">
+        // --- Icon Components (Replaces lucide-react library) ---
+        const IconWrapper = ({ children }) => <div className="w-6 h-6 text-purple-300">{children}</div>;
+        const Github = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/></svg></IconWrapper>;
+        const Linkedin = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></IconWrapper>;
+        const Mail = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></IconWrapper>;
+        const Code = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></IconWrapper>;
+        const Award = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></IconWrapper>;
+        const Briefcase = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg></IconWrapper>;
+        const GraduationCap = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.084a1 1 0 0 0 0 1.838l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12v5c0 3 3 5 6 5s6-2 6-5v-5"/></svg></IconWrapper>;
 
-                <!-- Education & Certifications Section -->
-                <section id="education">
-                    <h2 class="text-2xl font-bold mb-8 border-b-2 border-red-600 pb-2 text-gray-100">Education & Certifications</h2>
-                    
-                    <div class="relative ml-20">
-                        <!-- Timeline Item: University -->
-                        <div class="timeline-item">
-                            <p class="absolute -left-16 top-3 w-14 text-right text-sm font-semibold text-red-400 mono-font">Present</p>
-                            <h3 class="text-lg font-bold text-gray-100 mb-2">Software Engineering Student @ Queen's University</h3>
-                            <p class="text-sm text-gray-400 mb-2">Level 2 Modules (Ongoing)</p>
-                            <p class="text-gray-300 text-sm">Focusing on Software Engineering & Systems Development, System's Security and Cryptography, Data Structures & Algorithms, and more.</p>
-                        </div>
-                        
-                        <!-- Timeline Item: CompTIA Security+ -->
-                        <div class="timeline-item">
-                            <p class="absolute -left-16 top-3 w-14 text-right text-sm font-semibold text-red-400 mono-font">2025</p>
-                            <h3 class="text-lg font-bold text-gray-100 mb-2">CompTIA Security+ Certified</h3>
-                            <p class="text-gray-300 text-sm">Issued: August 24, 2025</p>
-                             <a href="https://www.credly.com/badges/232ac4bf-47c8-47c7-b620-8983cc85d554" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 text-sm text-red-400 hover:text-red-300 transition-colors">
-                                Verify Certification &rarr;
-                            </a>
-                        </div>
-                        
-                        <!-- Timeline Item: A Levels -->
-                        <div class="timeline-item">
-                            <p class="absolute -left-16 top-3 w-14 text-right text-sm font-semibold text-red-400 mono-font">2023</p>
-                            <h3 class="text-lg font-bold text-gray-100 mb-2">A Levels</h3>
-                            <p class="text-gray-300 text-sm">Completed A Levels in Mathematics (B), Software Systems Development (B), and Geography (B).</p>
-                        </div>
+        // --- Main Portfolio Component ---
+        function Portfolio() {
+          const [activeSection, setActiveSection] = React.useState('about');
 
-                        <!-- Timeline Item: GCSEs -->
-                        <div class="timeline-item">
-                            <p class="absolute -left-16 top-3 w-14 text-right text-sm font-semibold text-red-400 mono-font">2021</p>
-                            <h3 class="text-lg font-bold text-gray-100 mb-2">GCSEs</h3>
-                            <p class="text-gray-300 text-sm">Achieved 10 GCSEs including Mathematics (A) and English Language (A).</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-            
-            <!-- Footer -->
-            <footer class="text-center p-4 bg-black bg-opacity-30 text-xs text-gray-500">
-                <p>&copy; 2025 Mark Moore (0xGrooted). All Rights Reserved.</p>
-            </footer>
-        </div>
-    </div>
+          const projects = [
+            {
+              title: "TrackingtheStack",
+              description: "Full-stack financial platform processing 300+ hedge funds and 100k+ quarterly SEC filing data",
+              tech: ["Python", "MariaDB", "PHP", "JavaScript", "Chart.js"],
+              highlights: [
+                "Automated data ingestion and enrichment with historical pricing",
+                "Interactive dashboard visualising performance against S&P 500",
+                "$10,000 backtest simulator demonstrating 5-year returns outperforming market benchmarks"
+              ]
+            },
+            {
+              title: "ReignFall",
+              description: "Text-based web game developed as part of a collaborative team project",
+              tech: ["HTML", "CSS", "JavaScript"],
+              highlights: [
+                "Collaborated in team of six using SDLC practices",
+                "Implemented core game logic and interactive graphics",
+                "Managed version control with GitHub for live web application"
+              ]
+            }
+          ];
+
+          const skills = {
+            "Languages": ["Python", "Java", "C#", "C++", "JavaScript"],
+            "Frontend": ["React", "HTML", "CSS", "PHP"],
+            "Backend & Data": ["MariaDB", "SQL", "Git"],
+            "Security": ["Metasploit", "Penetration Testing", "CompTIA Security+"],
+            "Other": ["Unix/Linux", "Windows", "Networking", "Raspberry Pi"]
+          };
+
+          const achievements = [
+            "8th place (Top 1%) out of 1,500+ participants in Meta's CTF Tournament",
+            "Best Use of GEN AI award at Sustainable Tourism Hackathon",
+            "Gold Duke of Edinburgh Award presented at Buckingham Palace",
+            "Top 4% worldwide on TryHackMe platform",
+            "Chess rating: 1900 ELO (99.1st percentile)",
+            "Contributor to Metasploit Framework"
+          ];
+
+          const SectionContent = () => {
+              switch (activeSection) {
+                  case 'projects':
+                      return (
+                          <div className="space-y-6 animate-fade-in">
+                              <div className="flex items-center gap-3 mb-8">
+                                  <Code />
+                                  <h3 className="text-3xl font-bold text-white">Featured Projects</h3>
+                              </div>
+                              {projects.map((project, idx) => (
+                                  <div key={idx} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 hover:border-purple-500/40 transition-all">
+                                      <h4 className="text-2xl font-bold text-white mb-3">{project.title}</h4>
+                                      <p className="text-gray-300 mb-4">{project.description}</p>
+                                      <div className="flex flex-wrap gap-2 mb-4">
+                                          {project.tech.map((tech, i) => (
+                                              <span key={i} className="px-3 py-1 bg-purple-600/20 text-purple-300 rounded-full text-sm border border-purple-500/30">{tech}</span>
+                                          ))}
+                                      </div>
+                                      <ul className="space-y-2">
+                                          {project.highlights.map((highlight, i) => (
+                                              <li key={i} className="text-gray-300 flex items-start gap-2">
+                                                  <span className="text-purple-400 mt-1">▹</span>
+                                                  <span>{highlight}</span>
+                                              </li>
+                                          ))}
+                                      </ul>
+                                  </div>
+                              ))}
+                          </div>
+                      );
+                  case 'skills':
+                      return (
+                          <div className="animate-fade-in">
+                              <div className="flex items-center gap-3 mb-8">
+                                  <Code />
+                                  <h3 className="text-3xl font-bold text-white">Technical Skills</h3>
+                              </div>
+                              <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+                                  {Object.entries(skills).map(([category, items]) => (
+                                      <div key={category} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20">
+                                          <h4 className="text-xl font-semibold text-purple-400 mb-4">{category}</h4>
+                                          <div className="flex flex-wrap gap-2">
+                                              {items.map((skill, i) => (
+                                                  <span key={i} className="px-3 py-1 bg-slate-700/50 text-gray-300 rounded-lg text-sm border border-purple-500/10">{skill}</span>
+                                              ))}
+                                          </div>
+                                      </div>
+                                  ))}
+                              </div>
+                          </div>
+                      );
+                  case 'achievements':
+                      return (
+                          <div className="animate-fade-in">
+                              <div className="flex items-center gap-3 mb-8">
+                                  <Award />
+                                  <h3 className="text-3xl font-bold text-white">Achievements</h3>
+                              </div>
+                              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20">
+                                  <div className="grid md:grid-cols-2 gap-6">
+                                      {achievements.map((achievement, idx) => (
+                                          <div key={idx} className="flex items-start gap-3 p-4 bg-slate-700/30 rounded-xl border border-purple-500/10">
+                                            <div className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1"><Award /></div>
+                                            <p className="text-gray-300">{achievement}</p>
+                                          </div>
+                                      ))}
+                                  </div>
+                              </div>
+                          </div>
+                      );
+                  case 'about':
+                  default:
+                      return (
+                          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 animate-fade-in">
+                              <div className="flex items-center gap-3 mb-6">
+                                  <GraduationCap />
+                                  <h3 className="text-3xl font-bold text-white">About Me</h3>
+                              </div>
+                              <p className="text-gray-300 text-lg leading-relaxed mb-6">
+                                  I'm an enthusiastic software engineering student with a passion for solving real-world problems and developing innovative solutions. With expertise in full-stack development and a strong interest in cybersecurity, I bring both technical skills and collaborative experience to every project.
+                              </p>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                  <div className="bg-slate-700/30 rounded-xl p-6 border border-purple-500/10">
+                                      <Briefcase />
+                                      <h4 className="text-xl font-semibold text-white mb-2">Experience</h4>
+                                      <p className="text-gray-300">Cyber First Ambassador, Healthcare IT Support, and multiple administrative roles demonstrating strong organizational and technical capabilities.</p>
+                                  </div>
+                                  <div className="bg-slate-700/30 rounded-xl p-6 border border-purple-500/10">
+                                      <Code />
+                                      <h4 className="text-xl font-semibold text-white mb-2">Focus Areas</h4>
+                                      <p className="text-gray-300">Full-stack development, cybersecurity, data analysis, and building practical solutions that make a real impact.</p>
+                                  </div>
+                              </div>
+                          </div>
+                      );
+              }
+          };
+
+          return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+                  <nav className="fixed top-0 w-full bg-slate-900/80 backdrop-blur-sm border-b border-purple-500/20 z-50">
+                      <div className="max-w-6xl mx-auto px-6 py-4">
+                          <div className="flex justify-between items-center">
+                              <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Mark M</h1>
+                              <div className="hidden md:flex gap-6">
+                                  {['about', 'projects', 'skills', 'achievements'].map((section) => (
+                                      <button
+                                          key={section}
+                                          onClick={() => setActiveSection(section)}
+                                          className={`capitalize transition-colors ${activeSection === section ? 'text-purple-400' : 'text-gray-300 hover:text-purple-300'}`}
+                                      >
+                                          {section}
+                                      </button>
+                                  ))}
+                              </div>
+                          </div>
+                      </div>
+                  </nav>
+
+                  <main className="pt-24 pb-20 px-6">
+                      <div className="max-w-4xl mx-auto">
+                          <div className="text-center mb-16">
+                              <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">Software Engineering Student</h2>
+                              <p className="text-xl text-gray-300 mb-8">Full-Stack Developer | Cybersecurity Enthusiast | Problem Solver</p>
+                              <div className="flex justify-center gap-4">
+                                  <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="p-3 bg-purple-600/20 hover:bg-purple-600/30 rounded-full border border-purple-500/30 transition-all">
+                                      <Github />
+                                  </a>
+                                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-3 bg-purple-600/20 hover:bg-purple-600/30 rounded-full border border-purple-500/30 transition-all">
+                                      <Linkedin />
+                                  </a>
+                                  <a href="mailto:email@example.com" className="p-3 bg-purple-600/20 hover:bg-purple-600/30 rounded-full border border-purple-500/30 transition-all">
+                                      <Mail />
+                                  </a>
+                              </div>
+                          </div>
+
+                          <div className="md:hidden mb-8">
+                              <div className="flex justify-center gap-2 bg-slate-800/50 p-2 rounded-xl border border-purple-500/20">
+                                  {['about', 'projects', 'skills', 'achievements'].map((section) => (
+                                      <button
+                                          key={section}
+                                          onClick={() => setActiveSection(section)}
+                                          className={`w-full capitalize text-sm py-2 rounded-lg transition-colors ${activeSection === section ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-purple-600/20'}`}
+                                      >
+                                          {section}
+                                      </button>
+                                  ))}
+                              </div>
+                          </div>
+                          
+                          <SectionContent />
+                      </div>
+                  </main>
+              </div>
+          );
+        }
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<Portfolio />);
+    </script>
 </body>
 </html>
-
