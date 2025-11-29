@@ -1,159 +1,341 @@
-import React, { useState } from 'react';
-import { Shield, Search, Calendar, ExternalLink } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0xGrooted - Blue Team Writeups</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Fallback for Tailwind - in case the CDN doesn't load */
+        :root {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
 
-export default function BlueTeamWriteups() {
-  // EDIT YOUR WRITEUPS HERE - Just add new objects to this array
-  const allWriteups = [
-    {
-      id: '1',
-      title: 'Detecting Lateral Movement with Sysmon',
-      description: 'Deep dive into using Sysmon Event ID 3 for network connections to identify lateral movement techniques.',
-      category: 'Detection',
-      date: '2024-11-15',
-      url: 'https://github.com/0xGrooted/writeup-1'
-    },
-    {
-      id: '2',
-      title: 'Hunting for PowerShell Empire C2',
-      description: 'Techniques and queries for identifying PowerShell Empire command and control activity in your environment.',
-      category: 'Threat Hunting',
-      date: '2024-10-28',
-      url: 'https://github.com/0xGrooted/writeup-2'
-    },
-    // Add more writeups here following the same format
-  ];
+        /* --- Custom CSS Animations & Styles --- */
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        @keyframes slide {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const categories = ['Detection', 'Incident Response', 'Threat Hunting', 'SIEM', 'Forensics', 'SOC', 'Malware Analysis'];
-
-  const filteredWriteups = allWriteups.filter(w => {
-    const matchesSearch = w.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         w.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || w.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const getCategoryColor = (category) => {
-    const colors = {
-      'Detection': 'bg-blue-500',
-      'Incident Response': 'bg-red-500',
-      'Threat Hunting': 'bg-purple-500',
-      'SIEM': 'bg-green-500',
-      'Forensics': 'bg-yellow-500',
-      'SOC': 'bg-indigo-500',
-      'Malware Analysis': 'bg-pink-500'
-    };
-    return colors[category] || 'bg-gray-500';
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
-      {/* Header */}
-      <div className="border-b border-blue-500/30 bg-slate-900/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
-            <Shield className="w-12 h-12 text-blue-400" />
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                0xGrooted
-              </h1>
-              <p className="text-blue-300 text-sm">Blue Team Security Writeups</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Search and Filter */}
-        <div className="bg-slate-800/50 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4 mb-6 shadow-xl">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-400" />
-              <input
-                type="text"
-                placeholder="Search writeups..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-blue-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 bg-slate-900/50 border border-blue-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-slate-800/50 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4 text-center">
-            <div className="text-3xl font-bold text-blue-400">{allWriteups.length}</div>
-            <div className="text-sm text-blue-300">Total Writeups</div>
-          </div>
-          {categories.slice(0, 3).map(cat => (
-            <div key={cat} className="bg-slate-800/50 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold text-blue-400">
-                {allWriteups.filter(w => w.category === cat).length}
-              </div>
-              <div className="text-sm text-blue-300">{cat}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Writeups Grid */}
-        {filteredWriteups.length === 0 ? (
-          <div className="text-center py-16">
-            <Shield className="w-16 h-16 text-blue-400/50 mx-auto mb-4" />
-            <p className="text-blue-300 text-lg">No writeups found matching your search.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredWriteups.map(writeup => (
-              <div
-                key={writeup.id}
-                className="bg-slate-800/50 backdrop-blur-sm border border-blue-500/30 rounded-xl p-6 hover:border-blue-400/50 transition-all shadow-xl hover:shadow-blue-500/20 hover:-translate-y-1"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <span className={`${getCategoryColor(writeup.category)} text-xs px-3 py-1 rounded-full font-medium`}>
-                    {writeup.category}
-                  </span>
-                </div>
-                
-                <h3 className="text-xl font-bold mb-2 text-blue-100">{writeup.title}</h3>
-                
-                {writeup.description && (
-                  <p className="text-blue-300/80 text-sm mb-4 line-clamp-3">{writeup.description}</p>
-                )}
-                
-                <div className="flex items-center gap-4 text-sm text-blue-400 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {new Date(writeup.date).toLocaleDateString()}
-                  </div>
-                </div>
-                
-                <a
-                  href={writeup.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-medium"
-                >
-                  Read Writeup
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .glow-animation {
+            animation: glow 3s ease-in-out infinite;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            /* Better hover: slightly lift and increase scale */
+            transform: translateY(-8px) scale(1.02);
+            /* Add a subtle shadow on hover */
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3); 
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .grid-bg {
+            /* Refactored grid-bg for slightly better visual separation */
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .cyber-border {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #60a5fa, transparent);
+            animation: slide 3s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen grid-bg">
+    
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl float-animation"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl float-animation" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl float-animation" style="animation-delay: 4s;"></div>
     </div>
-  );
-}
+
+    <header class="relative border-b border-blue-500/30 bg-slate-900/80 backdrop-blur-lg cyber-border z-10">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="flex items-center gap-6">
+                <div class="relative glow-animation">
+                    <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-5xl font-extrabold gradient-text mb-2">
+                        0xGrooted
+                    </h1>
+                    <p class="text-blue-300 text-lg flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        Blue Team Security Writeups & Research
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative max-w-7xl mx-auto px-4 py-12">
+        
+        <div class="bg-slate-900/60 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 mb-8 shadow-2xl">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 relative group">
+                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-400 group-focus-within:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search writeups by title or description..."
+                        class="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-blue-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-white placeholder-blue-300/50"
+                    />
+                </div>
+                <select
+                    id="categoryFilter"
+                    class="px-6 py-3 bg-slate-900/50 border border-blue-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-white cursor-pointer appearance-none md:w-52"
+                >
+                    <option value="all">All Categories</option>
+                    <option value="Detection">Detection</option>
+                    <option value="Incident Response">Incident Response</option>
+                    <option value="Threat Hunting">Threat Hunting</option>
+                    <option value="SIEM">SIEM</option>
+                    <option value="Forensics">Forensics</option>
+                    <option value="SOC">SOC</option>
+                    <option value="Malware Analysis">Malware Analysis</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="bg-gradient-to-br from-blue-600/20 to-blue-800/20 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 text-center shadow-xl">
+                <div class="text-4xl font-extrabold text-blue-400 mb-2" id="totalCount">0</div>
+                <div class="text-sm text-blue-300">Total Writeups</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-600/20 to-purple-800/20 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 text-center shadow-xl">
+                <div class="text-4xl font-extrabold text-purple-400" id="detectionCount">0</div>
+                <div class="text-sm text-purple-300">Detection</div>
+            </div>
+            <div class="bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6 text-center shadow-xl">
+                <div class="text-4xl font-extrabold text-red-400" id="irCount">0</div>
+                <div class="text-sm text-red-300">Incident Response</div>
+            </div>
+            <div class="bg-gradient-to-br from-green-600/20 to-green-800/20 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 text-center shadow-xl">
+                <div class="text-4xl font-extrabold text-green-400" id="huntingCount">0</div>
+                <div class="text-sm text-green-300">Threat Hunting</div>
+            </div>
+        </div>
+
+        <div id="writeupGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+
+        <div id="noResults" class="hidden text-center py-20">
+            <svg class="w-20 h-20 text-blue-400/50 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            <p class="text-blue-300 text-xl font-medium">No writeups found matching your current filters.</p>
+        </div>
+    </main>
+
+    <footer class="relative border-t border-blue-500/30 bg-slate-900/80 backdrop-blur-lg mt-20 z-10">
+        <div class="max-w-7xl mx-auto px-4 py-8 text-center">
+            <p class="text-blue-400">
+                &copy; <span id="currentYear"></span> 0xGrooted | Defending the Digital Frontier
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // ============================================
+        // EDIT YOUR WRITEUPS HERE
+        // ============================================
+        const writeups = [
+            {
+                id: '1',
+                title: 'Detecting Lateral Movement with Sysmon',
+                description: 'Deep dive into using **Sysmon Event ID 3** for network connections to identify lateral movement techniques across Windows environments.',
+                category: 'Detection',
+                date: '2024-11-15',
+                url: 'https://github.com/0xGrooted/writeup-1'
+            },
+            {
+                id: '2',
+                title: 'Hunting for PowerShell Empire C2',
+                description: 'Techniques and queries for identifying **PowerShell Empire** command and control activity in your environment using advanced analytics.',
+                category: 'Threat Hunting',
+                date: '2024-10-28',
+                url: 'https://github.com/0xGrooted/writeup-2'
+            },
+            {
+                id: '3',
+                title: 'Building Effective SIEM Detection Rules',
+                description: 'A comprehensive guide to creating **high-fidelity detection rules** in your SIEM platform with real-world examples and MITRE ATT&CK mapping.',
+                category: 'SIEM',
+                date: '2024-10-12',
+                url: 'https://github.com/0xGrooted/writeup-3'
+            },
+            {
+                id: '4',
+                title: 'Memory Forensics: Hunting Malicious Processes',
+                description: 'Advanced **memory forensics** techniques for identifying and analyzing malicious processes in memory dumps, focusing on Volatility framework usage.',
+                category: 'Forensics',
+                date: '2024-09-30',
+                url: 'https://github.com/0xGrooted/writeup-4'
+            },
+            {
+                id: '5',
+                title: 'Incident Response Playbook: Ransomware',
+                description: 'Step-by-step **incident response procedures** for handling ransomware incidents, from initial detection and containment to eradication and recovery.',
+                category: 'Incident Response',
+                date: '2024-09-15',
+                url: 'https://github.com/0xGrooted/writeup-5'
+            },
+            // Add more writeups here...
+        ];
+        // ============================================
+
+        const categoryColors = {
+            'Detection': 'bg-blue-600',
+            'Incident Response': 'bg-red-600',
+            'Threat Hunting': 'bg-purple-600',
+            'SIEM': 'bg-green-600',
+            'Forensics': 'bg-yellow-600',
+            'SOC': 'bg-indigo-600',
+            'Malware Analysis': 'bg-pink-600'
+        };
+
+        const elements = {
+            grid: document.getElementById('writeupGrid'),
+            noResults: document.getElementById('noResults'),
+            searchInput: document.getElementById('searchInput'),
+            categoryFilter: document.getElementById('categoryFilter'),
+            totalCount: document.getElementById('totalCount'),
+            detectionCount: document.getElementById('detectionCount'),
+            irCount: document.getElementById('irCount'),
+            huntingCount: document.getElementById('huntingCount')
+        };
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        function createWriteupCard(writeup) {
+            const categoryClass = categoryColors[writeup.category] || 'bg-slate-500'; // Fallback color
+            return `
+                <div class="bg-slate-900/60 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-7 shadow-2xl card-hover transition-all duration-300">
+                    <div class="flex items-start justify-between mb-4">
+                        <span class="${categoryClass} text-xs px-4 py-1.5 rounded-full font-semibold text-white shadow-md">
+                            ${writeup.category}
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-2xl font-extrabold mb-3 text-blue-100 hover:text-cyan-300 transition-colors">${writeup.title}</h3>
+                    
+                    <p class="text-blue-300/80 text-sm mb-5 line-clamp-3">${writeup.description}</p>
+                    
+                    <div class="flex items-center gap-2 text-sm text-blue-400 mb-5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        ${formatDate(writeup.date)}
+                    </div>
+                    
+                    <a
+                        href="${writeup.url}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex items-center gap-2 text-blue-400 hover:text-cyan-400 transition-colors font-semibold group mt-auto"
+                    >
+                        Read Writeup
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>
+                </div>
+            `;
+        }
+
+        function updateStats() {
+            elements.totalCount.textContent = writeups.length;
+            elements.detectionCount.textContent = writeups.filter(w => w.category === 'Detection').length;
+            elements.irCount.textContent = writeups.filter(w => w.category === 'Incident Response').length;
+            elements.huntingCount.textContent = writeups.filter(w => w.category === 'Threat Hunting').length;
+        }
+
+        function renderWriteups(filteredWriteups) {
+            
+            if (filteredWriteups.length === 0) {
+                elements.grid.classList.add('hidden');
+                elements.noResults.classList.remove('hidden');
+            } else {
+                elements.grid.classList.remove('hidden');
+                elements.noResults.classList.add('hidden');
+                elements.grid.innerHTML = filteredWriteups.map(createWriteupCard).join('');
+            }
+        }
+
+        function filterWriteups() {
+            const searchTerm = elements.searchInput.value.toLowerCase().trim();
+            const category = elements.categoryFilter.value;
+            
+            const filtered = writeups.filter(w => {
+                const searchCriteria = `${w.title.toLowerCase()} ${w.description.toLowerCase()}`;
+                
+                const matchesSearch = searchTerm === '' || searchCriteria.includes(searchTerm);
+                
+                // Refined category matching: checks if the category is 'all' OR if the writeup category matches the filter
+                const matchesCategory = category === 'all' || w.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderWriteups(filtered);
+        }
+
+        // Event listeners
+        elements.searchInput.addEventListener('input', filterWriteups);
+        elements.categoryFilter.addEventListener('change', filterWriteups);
+
+        // Initial render on page load
+        updateStats();
+        renderWriteups(writeups);
+    </script>
+</body>
+</html>
