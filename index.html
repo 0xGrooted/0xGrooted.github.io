@@ -7,7 +7,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Fallback for Tailwind - in case the CDN doesn't load */
+        /* Fallback for Tailwind */
         :root {
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
@@ -19,11 +19,7 @@
             50% { transform: translateY(-20px); }
         }
         
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
-        }
-        
+        /* NOTE: The @keyframes glow is intentionally kept but the class is removed from the logo */
         @keyframes slide {
             0% { left: -100%; }
             100% { left: 100%; }
@@ -33,18 +29,12 @@
             animation: float 6s ease-in-out infinite;
         }
         
-        .glow-animation {
-            animation: glow 3s ease-in-out infinite;
-        }
-        
         .card-hover {
             transition: all 0.3s ease;
         }
         
         .card-hover:hover {
-            /* Better hover: slightly lift and increase scale */
             transform: translateY(-8px) scale(1.02);
-            /* Add a subtle shadow on hover */
             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3); 
         }
         
@@ -56,7 +46,6 @@
         }
         
         .grid-bg {
-            /* Refactored grid-bg for slightly better visual separation */
             background-image: 
                 linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
@@ -78,6 +67,12 @@
             background: linear-gradient(90deg, transparent, #60a5fa, transparent);
             animation: slide 3s infinite;
         }
+        
+        /* Custom style for the overlay (simulating a full writeup view) */
+        .writeup-content-active {
+            opacity: 1;
+            transform: scale(1);
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen grid-bg">
@@ -88,10 +83,10 @@
         <div class="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl float-animation" style="animation-delay: 4s;"></div>
     </div>
 
-    <header class="relative border-b border-blue-500/30 bg-slate-900/80 backdrop-blur-lg cyber-border z-10">
+    <header class="relative border-b border-blue-500/30 bg-slate-900/80 backdrop-blur-lg cyber-border z-20">
         <div class="max-w-7xl mx-auto px-4 py-8">
             <div class="flex items-center gap-6">
-                <div class="relative glow-animation">
+                <div class="relative"> 
                     <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
@@ -109,7 +104,7 @@
         </div>
     </header>
 
-    <main class="relative max-w-7xl mx-auto px-4 py-12">
+    <main class="relative max-w-7xl mx-auto px-4 py-12 z-10">
         
         <div class="bg-slate-900/60 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 mb-8 shadow-2xl">
             <div class="flex flex-col md:flex-row gap-4">
@@ -158,6 +153,29 @@
                 <div class="text-sm text-green-300">Threat Hunting</div>
             </div>
         </div>
+        
+        <div 
+            id="writeupContent" 
+            class="hidden fixed inset-0 bg-slate-950/95 backdrop-blur-md z-30 overflow-y-auto p-4 md:p-12 transition-all duration-300"
+        >
+            <div class="max-w-4xl mx-auto bg-slate-900 border border-blue-500/50 rounded-xl shadow-2xl p-8 md:p-12 relative transform scale-95 opacity-0 writeup-content-active">
+                <button 
+                    id="closeButton"
+                    class="absolute top-4 right-4 text-blue-400 hover:text-red-400 transition-colors"
+                >
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <h2 id="contentTitle" class="text-4xl font-extrabold gradient-text mb-4">Writeup Title</h2>
+                <div class="flex items-center gap-4 text-sm text-blue-300 mb-8 border-b border-blue-500/30 pb-4">
+                    <span id="contentCategory" class="px-4 py-1.5 rounded-full font-semibold">Category</span>
+                    <span id="contentDate">Date</span>
+                </div>
+                <div id="contentBody" class="text-blue-200 leading-relaxed space-y-6">
+                    </div>
+            </div>
+        </div>
 
         <div id="writeupGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
@@ -183,7 +201,7 @@
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
         // ============================================
-        // EDIT YOUR WRITEUPS HERE
+        // WRITEUP DATA (Content is now added)
         // ============================================
         const writeups = [
             {
@@ -192,7 +210,18 @@
                 description: 'Deep dive into using **Sysmon Event ID 3** for network connections to identify lateral movement techniques across Windows environments.',
                 category: 'Detection',
                 date: '2024-11-15',
-                url: 'https://github.com/0xGrooted/writeup-1'
+                // New: Added full content for on-page display
+                content: `
+                    <p>Lateral movement is a critical phase in the **kill chain**. Attackers use it to move from an initial compromise point to high-value assets. Our strategy focuses on Sysmon Event ID 3 (Network Connection) to establish baselines and identify anomalies.</p>
+                    <p>Key areas for detection include:</p>
+                    <ul class="list-disc pl-5">
+                        <li>**Non-standard ports** for common protocols (e.g., RDP on port 3390 instead of 3389).</li>
+                        <li>Connections originating from service accounts to domain controllers.</li>
+                        <li>High volume of connections from a single host to multiple unique internal hosts over a short period.</li>
+                    </ul>
+                    <p>A sample **KQL query** (for Azure Sentinel/Microsoft Sentinel) might look like: <code>Sysmon | where EventID == 3 and DestinationPort == 445 and ProcessName contains "powershell"</code>. This targets Powershell trying to use SMB for lateral access.</p>
+                    <p class="text-yellow-400 border-l-4 border-yellow-400 pl-4 py-2 bg-slate-800/50">**Note:** Tuning is essential. High-fidelity alerts are generated by filtering out expected internal traffic (e.g., backup jobs, monitoring agents).</p>
+                `
             },
             {
                 id: '2',
@@ -200,7 +229,16 @@
                 description: 'Techniques and queries for identifying **PowerShell Empire** command and control activity in your environment using advanced analytics.',
                 category: 'Threat Hunting',
                 date: '2024-10-28',
-                url: 'https://github.com/0xGrooted/writeup-2'
+                content: `
+                    <p>PowerShell Empire is a post-exploitation framework favored by red teams and threat actors. Hunting for its presence requires looking beyond simple process execution.</p>
+                    <p class="text-xl font-bold text-blue-400 mt-6 mb-3">Key Hunting Artifacts:</p>
+                    <ol class="list-decimal pl-5">
+                        <li>**Encoded Commands:** Empire often uses heavily encoded PowerShell to evade basic signatures. Look for long command lines using <code>-EncodedCommand</code>.</li>
+                        <li>**Unusual Network Traffic:** The framework often uses unique User-Agents (often Python or custom strings) or communicates over non-standard HTTP/S ports.</li>
+                        <li>**Junction Points/Folders:** Check temporary directories for files with randomized names, especially those relating to staging or communication pipes.</li>
+                    </ol>
+                    <p>The goal is to move from **Indicators of Compromise (IoCs)** to **Indicators of Attack (IoAs)**—searching for the *behavior* rather than just the known signature.</p>
+                `
             },
             {
                 id: '3',
@@ -208,7 +246,18 @@
                 description: 'A comprehensive guide to creating **high-fidelity detection rules** in your SIEM platform with real-world examples and MITRE ATT&CK mapping.',
                 category: 'SIEM',
                 date: '2024-10-12',
-                url: 'https://github.com/0xGrooted/writeup-3'
+                content: `
+                    <p>Effective SIEM rules must balance noise (false positives) against coverage (true positives). A high-fidelity rule starts with a **specific threat use case** and applies strong normalization.</p>
+                    <p class="text-lg font-bold text-green-400 mt-6 mb-3">Rule Development Lifecycle:</p>
+                    <ol class="list-decimal pl-5">
+                        <li>**Define Use Case:** E.g., "Detecting RDP brute-force attempts."</li>
+                        <li>**Identify Data Sources:** Windows Event Log Security ID 4625 (Failed Logon).</li>
+                        <li>**Establish Threshold:** Alert if 10 or more failures from the same source IP against the same destination host occur in 5 minutes.</li>
+                        <li>**Test and Tune:** Run against historical data. Exclude known scanners or false positive sources.</li>
+                        <li>**Map to MITRE ATT&CK:** Map this rule to the **Credential Access** tactic (T1110) and **Brute Force** technique.</li>
+                    </ol>
+                    <p>This systematic approach ensures your SOC analysts receive actionable, high-priority alerts.</p>
+                `
             },
             {
                 id: '4',
@@ -216,7 +265,17 @@
                 description: 'Advanced **memory forensics** techniques for identifying and analyzing malicious processes in memory dumps, focusing on Volatility framework usage.',
                 category: 'Forensics',
                 date: '2024-09-30',
-                url: 'https://github.com/0xGrooted/writeup-4'
+                content: `
+                    <p>Memory analysis is crucial for finding artifacts that live only in RAM, such as **code injection**, reflective DLL loading, and credential dumps that bypass disk-based logging.</p>
+                    <p class="text-lg font-bold text-yellow-400 mt-6 mb-3">Key Volatility Plugins for Hunting:</p>
+                    <ul class="list-disc pl-5">
+                        <li>**`pslist` / `pstree`:** Identify suspicious parent-child relationships (e.g., cmd.exe spawned by a benign process like Outlook).</li>
+                        <li>**`malfind`:** Looks for injected or compressed code in process memory using heuristics. This is a primary tool for finding droppers and shellcode.</li>
+                        <li>**`dlllist`:** Check for suspicious DLLs loaded by critical system processes (DLL side-loading).</li>
+                        <li>**`hivelist` / `printkey`:** Extract registry keys often used for persistence, like Run keys, from the memory dump.</li>
+                    </ul>
+                    <p>Using a combination of these tools allows for a complete picture of the attacker's activities within the volatile memory space.</p>
+                `
             },
             {
                 id: '5',
@@ -224,9 +283,17 @@
                 description: 'Step-by-step **incident response procedures** for handling ransomware incidents, from initial detection and containment to eradication and recovery.',
                 category: 'Incident Response',
                 date: '2024-09-15',
-                url: 'https://github.com/0xGrooted/writeup-5'
+                content: `
+                    <p>A well-defined Ransomware Playbook is the backbone of swift recovery. The process must follow the standard **Preparation, Identification, Containment, Eradication, Recovery, and Lessons Learned** phases.</p>
+                    <p class="text-xl font-bold text-red-400 mt-6 mb-3">Containment Priorities:</p>
+                    <ol class="list-decimal pl-5">
+                        <li>**Isolate Network:** Disconnect affected systems/segments from the network immediately. Avoid simply powering off, as this destroys volatile evidence.</li>
+                        <li>**Prevent Lateral Spread:** Disable compromised accounts, enforce multi-factor authentication, and monitor adjacent systems.</li>
+                        <li>**Identify Patient Zero:** Determine the initial infection vector (phishing, vulnerable service, RDP brute force). This is critical for eradication.</li>
+                    </ol>
+                    <p class="text-blue-400 border-l-4 border-blue-400 pl-4 py-2 bg-slate-800/50">**DO NOT PAY THE RANSOM.** Focus on forensic data collection, backup restoration, and hardening the environment based on lessons learned.</p>
+                `
             },
-            // Add more writeups here...
         ];
         // ============================================
 
@@ -248,7 +315,13 @@
             totalCount: document.getElementById('totalCount'),
             detectionCount: document.getElementById('detectionCount'),
             irCount: document.getElementById('irCount'),
-            huntingCount: document.getElementById('huntingCount')
+            huntingCount: document.getElementById('huntingCount'),
+            writeupContent: document.getElementById('writeupContent'), // New
+            closeButton: document.getElementById('closeButton'), // New
+            contentTitle: document.getElementById('contentTitle'), // New
+            contentCategory: document.getElementById('contentCategory'), // New
+            contentDate: document.getElementById('contentDate'), // New
+            contentBody: document.getElementById('contentBody') // New
         };
 
         function formatDate(dateString) {
@@ -256,38 +329,80 @@
             return new Date(dateString).toLocaleDateString('en-US', options);
         }
 
+        // Function to show the full writeup content
+        function showWriteup(id) {
+            const writeup = writeups.find(w => w.id === id);
+            if (!writeup) return;
+
+            // Populate the modal/overlay
+            elements.contentTitle.textContent = writeup.title;
+            elements.contentBody.innerHTML = writeup.content;
+            elements.contentDate.textContent = formatDate(writeup.date);
+            
+            // Set category tag text and color
+            elements.contentCategory.textContent = writeup.category;
+            // Remove all existing category colors
+            Object.values(categoryColors).forEach(c => elements.contentCategory.classList.remove(c));
+            // Add the new category color
+            elements.contentCategory.classList.add(categoryColors[writeup.category] || 'bg-slate-500');
+
+            // Display the overlay and enable transitions
+            elements.writeupContent.classList.remove('hidden');
+            // Timeout allows the display block to take effect before the transition starts
+            setTimeout(() => {
+                elements.writeupContent.querySelector('div').classList.add('writeup-content-active');
+            }, 10);
+            
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to hide the full writeup content
+        function hideWriteup() {
+            // Start exit transition
+            elements.writeupContent.querySelector('div').classList.remove('writeup-content-active');
+            
+            // Hide element after transition finishes (300ms)
+            setTimeout(() => {
+                elements.writeupContent.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Re-enable background scrolling
+            }, 300); 
+        }
+
         function createWriteupCard(writeup) {
-            const categoryClass = categoryColors[writeup.category] || 'bg-slate-500'; // Fallback color
+            const categoryClass = categoryColors[writeup.category] || 'bg-slate-500'; 
             return `
-                <div class="bg-slate-900/60 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-7 shadow-2xl card-hover transition-all duration-300">
-                    <div class="flex items-start justify-between mb-4">
-                        <span class="${categoryClass} text-xs px-4 py-1.5 rounded-full font-semibold text-white shadow-md">
-                            ${writeup.category}
-                        </span>
+                <div class="bg-slate-900/60 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-7 shadow-2xl card-hover transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <span class="${categoryClass} text-xs px-4 py-1.5 rounded-full font-semibold text-white shadow-md">
+                                ${writeup.category}
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-extrabold mb-3 text-blue-100">${writeup.title}</h3>
+                        
+                        <p class="text-blue-300/80 text-sm mb-5 line-clamp-3">${writeup.description}</p>
                     </div>
-                    
-                    <h3 class="text-2xl font-extrabold mb-3 text-blue-100 hover:text-cyan-300 transition-colors">${writeup.title}</h3>
-                    
-                    <p class="text-blue-300/80 text-sm mb-5 line-clamp-3">${writeup.description}</p>
-                    
-                    <div class="flex items-center gap-2 text-sm text-blue-400 mb-5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        ${formatDate(writeup.date)}
+
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex items-center gap-2 text-sm text-blue-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            ${formatDate(writeup.date)}
+                        </div>
+                        
+                        <button
+                            data-id="${writeup.id}"
+                            class="read-more-btn flex items-center gap-2 text-blue-400 hover:text-cyan-400 transition-colors font-semibold group"
+                        >
+                            Read Writeup
+                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </button>
                     </div>
-                    
-                    <a
-                        href="${writeup.url}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="flex items-center gap-2 text-blue-400 hover:text-cyan-400 transition-colors font-semibold group mt-auto"
-                    >
-                        Read Writeup
-                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
                 </div>
             `;
         }
@@ -308,6 +423,14 @@
                 elements.grid.classList.remove('hidden');
                 elements.noResults.classList.add('hidden');
                 elements.grid.innerHTML = filteredWriteups.map(createWriteupCard).join('');
+                
+                // FIX: Attach event listeners to the new "Read More" buttons
+                document.querySelectorAll('.read-more-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const writeupId = e.currentTarget.dataset.id;
+                        showWriteup(writeupId);
+                    });
+                });
             }
         }
 
@@ -319,8 +442,6 @@
                 const searchCriteria = `${w.title.toLowerCase()} ${w.description.toLowerCase()}`;
                 
                 const matchesSearch = searchTerm === '' || searchCriteria.includes(searchTerm);
-                
-                // Refined category matching: checks if the category is 'all' OR if the writeup category matches the filter
                 const matchesCategory = category === 'all' || w.category === category;
                 
                 return matchesSearch && matchesCategory;
@@ -332,6 +453,16 @@
         // Event listeners
         elements.searchInput.addEventListener('input', filterWriteups);
         elements.categoryFilter.addEventListener('change', filterWriteups);
+        
+        // New: Close button for the writeup content overlay
+        elements.closeButton.addEventListener('click', hideWriteup);
+        
+        // New: Close the modal by clicking outside of it
+        elements.writeupContent.addEventListener('click', (e) => {
+            if (e.target === elements.writeupContent) {
+                hideWriteup();
+            }
+        });
 
         // Initial render on page load
         updateStats();
