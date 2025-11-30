@@ -91,34 +91,6 @@
         .nav-link {
             cursor: pointer;
         }
-
-        /* Modal Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .modal-animate {
-            animation: fadeIn 0.2s ease-out forwards;
-        }
-        
-        /* Scanline effect for AI modal */
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 10;
-            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(118, 185, 0, 0.1) 50%, rgba(0,0,0,0) 100%);
-            opacity: 0.1;
-            background-size: 100% 4px;
-            animation: scanline 10s linear infinite;
-            pointer-events: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -138,7 +110,7 @@
                     <div class="hidden md:ml-10 md:flex md:space-x-8" id="nav-container">
                         <!-- Note: 'active-nav' class is used by JS to toggle styles -->
                         <a id="nav-home" onclick="filterCategory('all', this)" class="nav-link border-b-2 border-hacker-green text-white px-1 pt-1 text-sm font-medium transition-colors duration-200">Home</a>
-                        <a id="nav-writeups" onclick="filterCategory('writeup', this)" class="nav-link border-b-2 border-transparent text-gray-300 hover:text-white hover:border-gray-300 px-1 pt-1 text-sm font-medium transition-colors duration-200">Writeups</a>
+                        <a id="nav-writeups" onclick="filterCategory('writeup', this)" class="nav-link border-b-2 border-transparent text-gray-300 hover:text-white hover:border-gray-300 px-1 pt-1 text-sm font-medium transition-colors duration-200">Incidents & Writeups</a>
                         <a id="nav-projects" onclick="filterCategory('project', this)" class="nav-link border-b-2 border-transparent text-gray-300 hover:text-white hover:border-gray-300 px-1 pt-1 text-sm font-medium transition-colors duration-200">Projects</a>
                         <a id="nav-certs" onclick="filterCategory('certification', this)" class="nav-link border-b-2 border-transparent text-gray-300 hover:text-white hover:border-gray-300 px-1 pt-1 text-sm font-medium transition-colors duration-200">Certifications</a>
                     </div>
@@ -183,7 +155,7 @@
                             <p class="text-xl text-gray-300 mb-4 font-mono border-b border-gray-800 pb-2 inline-block">Cyber Security Analyst | Red Teamer</p>
                             <p class="text-gray-400 mb-6 leading-relaxed text-sm">
                                 Welcome to my digital archive. I am passionate about understanding systems by breaking them. 
-                                Here you will find my detailed writeups on CTF challenges, deep dives into malware analysis, 
+                                Here you will find my detailed writeups on security incidents, CTF challenges, deep dives into malware analysis, 
                                 and the custom tools I build to automate my workflow.
                             </p>
                             <div class="flex flex-wrap justify-center md:justify-start gap-4">
@@ -192,6 +164,38 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Article: Incident Report -->
+                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="writeup">
+                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1618060932014-4deda4932554?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Incident" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                            <div class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
+                                CRITICAL INCIDENT
+                            </div>
+                        </div>
+                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
+                                    <i class="fa-regular fa-clock"></i> <span>Dec 02, 2023</span>
+                                    <span>|</span>
+                                    <i class="fa-solid fa-triangle-exclamation"></i> <span>Zero-Day</span>
+                                </div>
+                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
+                                    <a href="#" class="hover-underline-animation">Analysis of CVE-2023-XXXX: Remote Code Execution in WebKit</a>
+                                </h2>
+                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
+                                    A deep dive into the recent zero-day vulnerability affecting WebKit browsers. I break down the heap overflow mechanism and demonstrate a PoC exploit in a controlled environment.
+                                </p>
+                            </div>
+                            <div class="mt-4 flex items-center justify-between">
+                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Full Report <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                                <div class="flex gap-2">
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#exploit</span>
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#zeroday</span>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
                     <!-- Article 1 -->
                     <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="writeup">
@@ -219,9 +223,10 @@
                             </div>
                             <div class="mt-4 flex items-center justify-between">
                                 <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Writeup <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <button onclick="analyzeArticle(this)" class="flex items-center gap-1 text-xs border border-gray-700 hover:border-hacker-green text-gray-300 hover:text-hacker-green px-2 py-1 rounded transition">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
-                                </button>
+                                <div class="flex gap-2">
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#windows</span>
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#exploit</span>
+                                </div>
                             </div>
                         </div>
                     </article>
@@ -231,7 +236,7 @@
                         <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
                             <img src="https://images.unsplash.com/photo-1563206767-5b1d972eefab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Code Analysis" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
                             <div class="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                Analysis
+                                Malware Analysis
                             </div>
                         </div>
                         <div class="sm:w-2/3 p-5 flex flex-col justify-between">
@@ -250,9 +255,10 @@
                             </div>
                             <div class="mt-4 flex items-center justify-between">
                                 <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Analysis <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <button onclick="analyzeArticle(this)" class="flex items-center gap-1 text-xs border border-gray-700 hover:border-hacker-green text-gray-300 hover:text-hacker-green px-2 py-1 rounded transition">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
-                                </button>
+                                <div class="flex gap-2">
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#reversing</span>
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#malware</span>
+                                </div>
                             </div>
                         </div>
                     </article>
@@ -281,9 +287,9 @@
                             </div>
                             <div class="mt-4 flex items-center justify-between">
                                 <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Story <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <button onclick="analyzeArticle(this)" class="flex items-center gap-1 text-xs border border-gray-700 hover:border-hacker-green text-gray-300 hover:text-hacker-green px-2 py-1 rounded transition">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
-                                </button>
+                                <div class="flex gap-2">
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#oscp</span>
+                                </div>
                             </div>
                         </div>
                     </article>
@@ -312,9 +318,9 @@
                             </div>
                             <div class="mt-4 flex items-center justify-between">
                                 <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">View Code <i class="fa-brands fa-github ml-1"></i></a>
-                                <button onclick="analyzeArticle(this)" class="flex items-center gap-1 text-xs border border-gray-700 hover:border-hacker-green text-gray-300 hover:text-hacker-green px-2 py-1 rounded transition">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
-                                </button>
+                                <div class="flex gap-2">
+                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#coding</span>
+                                </div>
                             </div>
                         </div>
                     </article>
@@ -347,60 +353,53 @@
                     </div>
                 </div>
 
-                <!-- NEW AI FEATURE: Daily Threat Briefing -->
+                <!-- Trending / Top Stories Sidebar -->
                 <div class="bg-hacker-card border border-gray-800 p-6 rounded-sm">
                     <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-                        <i class="fa-solid fa-robot text-hacker-green"></i>
-                        <h3 class="font-bold text-white uppercase tracking-wider text-sm">AI Threat Brief</h3>
+                        <i class="fa-solid fa-fire text-hacker-green"></i>
+                        <h3 class="font-bold text-white uppercase tracking-wider text-sm">Trending Now</h3>
                     </div>
-                    <p class="text-xs text-gray-400 mb-4">
-                        Get a generated cyber security tip or threat intel briefing powered by Gemini.
-                    </p>
-                    <div id="tip-container" class="mb-4 hidden p-3 bg-black border-l-2 border-hacker-green text-xs text-gray-300 font-mono">
-                        <!-- Tip goes here -->
+                    
+                    <div class="space-y-4">
+                        <!-- Sidebar Item 1 -->
+                        <div class="flex gap-3 group cursor-pointer">
+                            <div class="text-gray-500 font-mono text-sm">01</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white group-hover:text-hacker-green transition leading-snug mb-1">
+                                    APT29 Targeting Cloud Services
+                                </h4>
+                                <p class="text-xs text-gray-500">2 hours ago</p>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Item 2 -->
+                         <div class="flex gap-3 group cursor-pointer">
+                            <div class="text-gray-500 font-mono text-sm">02</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white group-hover:text-hacker-green transition leading-snug mb-1">
+                                    New Ransomware Gang "BlackCat" Surfaces
+                                </h4>
+                                <p class="text-xs text-gray-500">5 hours ago</p>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Item 3 -->
+                         <div class="flex gap-3 group cursor-pointer">
+                            <div class="text-gray-500 font-mono text-sm">03</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white group-hover:text-hacker-green transition leading-snug mb-1">
+                                    Linux Kernel Vulnerability affects 40% of servers
+                                </h4>
+                                <p class="text-xs text-gray-500">1 day ago</p>
+                            </div>
+                        </div>
                     </div>
-                    <button onclick="generateTip()" id="tip-btn" class="w-full bg-transparent border border-hacker-green text-hacker-green hover:bg-hacker-green hover:text-black font-bold text-xs py-2 transition uppercase">
-                        Generate Briefing <i class="fa-solid fa-bolt ml-1"></i>
-                    </button>
+                    
+                    <div class="mt-4 pt-3 border-t border-gray-800">
+                         <a href="#" class="text-xs text-hacker-green hover:text-white font-bold uppercase">View All News <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                    </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
-
-    <!-- AI Analysis Modal -->
-    <div id="analysisModal" class="fixed inset-0 bg-black bg-opacity-90 z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-hacker-card border border-hacker-green w-full max-w-lg rounded-sm shadow-[0_0_20px_rgba(118,185,0,0.2)] relative overflow-hidden modal-animate">
-            <div class="scanline"></div>
-            
-            <!-- Modal Header -->
-            <div class="bg-black border-b border-gray-800 p-4 flex justify-between items-center relative z-20">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-microchip text-hacker-green"></i>
-                    <h3 class="font-bold text-white uppercase tracking-wider text-sm">Intel Analysis Report</h3>
-                </div>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <!-- Modal Body -->
-            <div id="modalBody" class="p-6 relative z-20 max-h-[70vh] overflow-y-auto">
-                <!-- Loading State -->
-                <div id="modalLoader" class="text-center py-8">
-                    <i class="fa-solid fa-circle-notch fa-spin text-hacker-green text-3xl mb-4"></i>
-                    <p class="text-gray-400 text-sm font-mono animate-pulse">Establishing secure uplink to Gemini...</p>
-                    <p class="text-gray-600 text-xs font-mono mt-2">Decrypting contents...</p>
-                </div>
-
-                <!-- Content State -->
-                <div id="modalContent" class="hidden">
-                    <!-- Dynamic content will be injected here -->
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="bg-black border-t border-gray-800 p-3 flex justify-end relative z-20">
-                <span class="text-[10px] text-gray-600 font-mono mr-auto self-center">POWERED BY GEMINI 2.5 FLASH</span>
-                <button onclick="closeModal()" class="px-4 py-1 text-xs border border-gray-600 text-gray-300 hover:text-white hover:border-white transition">CLOSE TERMINAL</button>
             </div>
         </div>
     </div>
@@ -419,9 +418,8 @@
 
     <!-- Scripts -->
     <script>
-        const apiKey = ""; // Set by environment
         
-        // Category Filter Function (Existing)
+        // Category Filter Function
         function filterCategory(category, navElement) {
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
@@ -436,7 +434,7 @@
             const iconElement = document.getElementById('section-icon');
             switch(category) {
                 case 'all': titleElement.innerText = 'Latest Intel'; iconElement.className = 'fa-solid fa-terminal text-hacker-green'; break;
-                case 'writeup': titleElement.innerText = 'CTF Writeups & Analysis'; iconElement.className = 'fa-solid fa-bug text-hacker-green'; break;
+                case 'writeup': titleElement.innerText = 'Security Incidents & Writeups'; iconElement.className = 'fa-solid fa-bug text-hacker-green'; break;
                 case 'project': titleElement.innerText = 'My Projects'; iconElement.className = 'fa-solid fa-code text-hacker-green'; break;
                 case 'certification': titleElement.innerText = 'Certifications & Reviews'; iconElement.className = 'fa-solid fa-certificate text-hacker-green'; break;
             }
@@ -469,96 +467,6 @@
                 }
             });
         });
-
-        /* --- AI FEATURES --- */
-
-        async function callGemini(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }]
-                    })
-                });
-                const data = await response.json();
-                return data.candidates[0].content.parts[0].text;
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                return null;
-            }
-        }
-
-        // Feature 1: Analyze Article
-        async function analyzeArticle(btnElement) {
-            const modal = document.getElementById('analysisModal');
-            const modalContent = document.getElementById('modalContent');
-            const modalLoader = document.getElementById('modalLoader');
-            
-            // Get content from the card
-            const card = btnElement.closest('.article-card');
-            const title = card.querySelector('.article-title').innerText;
-            const desc = card.querySelector('.article-desc').innerText;
-            const category = card.getAttribute('data-category');
-
-            // Show Modal & Loader
-            modal.classList.remove('hidden');
-            modalLoader.classList.remove('hidden');
-            modalContent.classList.add('hidden');
-
-            const prompt = `You are a senior cybersecurity analyst. Analyze this writeup titled "${title}" with description "${desc}" (Category: ${category}).
-            Output a short HTML snippet (no markdown, just tags) to be inserted into a div.
-            Use Tailwind classes for styling. Text color should be gray-300 or white. Headers should be hacker-green text-hacker-green font-bold.
-            Structure:
-            <div class="space-y-4">
-              <div><h3 class="text-hacker-green font-bold uppercase text-sm mb-1">Summary</h3><p class="text-sm text-gray-300">...</p></div>
-              <div><h3 class="text-hacker-green font-bold uppercase text-sm mb-1">Key Concepts</h3><ul class="list-disc list-inside text-sm text-gray-300"><li>...</li></ul></div>
-              <div><h3 class="text-hacker-green font-bold uppercase text-sm mb-1">Difficulty</h3><span class="... badge styles ...">...</span></div>
-            </div>`;
-
-            const result = await callGemini(prompt);
-
-            if (result) {
-                // Clean markdown code blocks if Gemini adds them
-                const cleanHtml = result.replace(/```html/g, '').replace(/```/g, '');
-                modalContent.innerHTML = cleanHtml;
-                modalLoader.classList.add('hidden');
-                modalContent.classList.remove('hidden');
-            } else {
-                modalContent.innerHTML = '<p class="text-red-500">Connection failed. Uplink terminated.</p>';
-                modalLoader.classList.add('hidden');
-                modalContent.classList.remove('hidden');
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('analysisModal').classList.add('hidden');
-        }
-
-        // Feature 2: Generate Threat Brief
-        async function generateTip() {
-            const btn = document.getElementById('tip-btn');
-            const container = document.getElementById('tip-container');
-            
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> GENERATING...';
-            btn.disabled = true;
-
-            const prompt = "Act as a red team operator. Give me 1 short, advanced, and interesting cybersecurity tip, trick, or fact. Keep it under 200 characters. No markdown.";
-            const result = await callGemini(prompt);
-
-            if(result) {
-                container.innerText = "> " + result;
-                container.classList.remove('hidden');
-                btn.innerHTML = 'Generate Briefing <i class="fa-solid fa-bolt ml-1"></i>';
-                btn.disabled = false;
-            } else {
-                container.innerText = "Error retrieving intel.";
-                container.classList.remove('hidden');
-                btn.innerHTML = 'Retry';
-                btn.disabled = false;
-            }
-        }
     </script>
 </body>
 </html>
