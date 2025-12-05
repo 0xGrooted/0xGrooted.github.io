@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decrypted File | 0xgrooted</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050714;
+            --accent-cyan: #4ecdc4;
+            --accent-yellow: #f7d794;
+            --accent-green: #95e1d3;
+            --font-pixel: 'VT323', monospace;
+            --font-mono: 'Fira Code', monospace;
+            --rebel-red: #ff3e3e;     
+            --saber-blue: #00eaff;
+        }
+
+        /* --- GLOBAL & ANIMATION CSS --- */
+        body {
+            background: var(--bg-color);
+            color: #e0e0e0;
+            font-family: var(--font-mono);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #starfield {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; /* Behind everything */
+            background: radial-gradient(circle at bottom center, #000510, #000000);
+        }
+
+        #hyperspace-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; opacity: 0; pointer-events: none; z-index: 10000;
+            transition: opacity 0.2s;
+        }
+
+        .hyperspace-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* --- UI ELEMENTS --- */
+        .back-btn {
+            display: inline-block;
+            color: var(--accent-cyan);
+            font-family: var(--font-pixel);
+            font-size: 1.5em;
+            text-decoration: none;
+            margin-bottom: 30px;
+            border: 1px solid var(--accent-cyan);
+            padding: 5px 15px;
+            transition: 0.3s;
+            cursor: pointer;
+            background: rgba(0,0,0,0.7);
+            position: relative; z-index: 10;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-cyan);
+            color: #000;
+        }
+
+        .file-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(16, 22, 47, 0.95); /* Slightly more opaque for readability */
+            border: 1px solid var(--accent-cyan);
+            box-shadow: 0 0 50px rgba(78, 205, 196, 0.1);
+            padding: 40px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .file-header {
+            border-bottom: 2px dashed rgba(255,255,255,0.2);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-family: var(--font-pixel);
+            font-size: 4em;
+            color: var(--accent-yellow);
+            margin: 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .meta-info {
+            color: var(--accent-green);
+            margin-top: 10px;
+        }
+
+        .content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        .content code {
+            background: #000;
+            color: var(--accent-yellow);
+            padding: 2px 6px;
+            border: 1px solid #333;
+        }
+        
+        .content pre {
+            background: #000;
+            padding: 20px;
+            border-left: 3px solid var(--accent-cyan);
+            overflow-x: auto;
+        }
+
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: 3px solid var(--accent-green);
+            color: var(--accent-green);
+            font-family: var(--font-pixel);
+            font-size: 2em;
+            padding: 5px 10px;
+            transform: rotate(15deg);
+            opacity: 0.7;
+        }
+        
+        /* Ensure images fit container */
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.2);
+            margin: 20px 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+    
+    <div id="hyperspace-overlay"></div>
+
+    <a href="#" class="back-btn" onclick="engageHyperspace('index.html'); return false;"><- RETURN_TO_BASE</a>
+
+    <div class="file-container" id="fileContainer">
+        <div style="text-align: center;">Loading Data...</div>
+    </div>
+
+    <script>
+        // --- 1. HYPERSPACE & BACKGROUND ENGINE (Same as Index) ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height, cx, cy;
+        let stars = [];
+        let planets = [];
+        let ships = [];
+        
+        let baseSpeed = 0.2;
+        let speed = baseSpeed;
+        let isHyper = false;
+
+        class Planet {
+            constructor() {
+                this.reset();
+                this.z = Math.random() * width * 2;
+            }
+            reset() {
+                this.x = (Math.random() - 0.5) * width * 3; 
+                this.y = (Math.random() - 0.5) * height * 3;
+                this.z = width * 3; 
+                this.radius = 50 + Math.random() * 150; 
+                const colors = [['#1a2a6c', '#b21f1f', '#fdbb2d'], ['#23074d', '#cc5333'], ['#0f2027', '#203a43', '#2c5364'], ['#3a1c71', '#d76d77', '#ffaf7b']];
+                this.colorPalette = colors[Math.floor(Math.random() * colors.length)];
+            }
+            draw() {
+                this.z -= speed * 0.1; 
+                if(this.z <= 0) this.reset();
+                const scale = width / this.z;
+                const x2d = (this.x * scale) + cx;
+                const y2d = (this.y * scale) + cy;
+                const r2d = this.radius * scale;
+                const opacity = isHyper ? Math.max(0, 1 - (speed * 2)) : Math.min(1, this.z / width);
+                if (opacity <= 0 || r2d < 1) return;
+                ctx.globalAlpha = opacity;
+                const grad = ctx.createRadialGradient(x2d - r2d/3, y2d - r2d/3, r2d/10, x2d, y2d, r2d);
+                this.colorPalette.forEach((col, index) => { grad.addColorStop(index / (this.colorPalette.length - 1), col); });
+                grad.addColorStop(1, 'rgba(0,0,0,0.8)');
+                ctx.beginPath(); ctx.fillStyle = grad; ctx.arc(x2d, y2d, r2d, 0, Math.PI*2); ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        class Ship {
+            constructor() { this.reset(true); }
+            reset(initial = false) {
+                const side = Math.floor(Math.random() * 4);
+                if(side === 0) { this.x = -50; this.y = Math.random() * height; } 
+                else if(side === 1) { this.x = width + 50; this.y = Math.random() * height; } 
+                else { this.x = Math.random() * width; this.y = Math.random() * height; }
+                this.vx = (Math.random() - 0.5) * 4; this.vy = (Math.random() - 0.5) * 2;
+                this.size = 2 + Math.random() * 3;
+                this.color = Math.random() > 0.5 ? '#00eaff' : '#ff3e3e'; // Cyan or Red
+                if(initial) { this.x = Math.random() * width; this.y = Math.random() * height; }
+            }
+            draw() {
+                this.x += this.vx * (isHyper ? 5 : 1); this.y += this.vy * (isHyper ? 5 : 1);
+                if(this.x < -100 || this.x > width + 100 || this.y < -100 || this.y > height + 100) { this.reset(); }
+                const opacity = isHyper ? Math.max(0, 1 - speed) : 1;
+                if(opacity <= 0) return;
+                ctx.globalAlpha = opacity; ctx.shadowBlur = 10; ctx.shadowColor = this.color; ctx.fillStyle = "#fff";
+                ctx.beginPath(); ctx.ellipse(this.x, this.y, this.size * 1.5, this.size/2, Math.atan2(this.vy, this.vx), 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0; ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function initSpace() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            cx = width / 2; cy = height / 2;
+            stars = []; planets = []; ships = [];
+            for (let i = 0; i < 400; i++) {
+                stars.push({ x: (Math.random() - 0.5) * width * 2, y: (Math.random() - 0.5) * height * 2, z: Math.random() * width, sizeBase: Math.random() });
+            }
+            for(let i=0; i<2; i++) planets.push(new Planet()); // Reduced planets for readability
+            for(let i=0; i<5; i++) ships.push(new Ship());
+        }
+
+        function drawSpace() {
+            ctx.fillStyle = isHyper ? "rgba(0,5,16,0.4)" : "rgba(5, 7, 20, 1)"; // Clear to background color
+            ctx.fillRect(0, 0, width, height);
+            planets.forEach(p => p.draw());
+            stars.forEach(star => {
+                star.z -= speed;
+                if (star.z <= 0) { star.z = width; star.x = (Math.random() - 0.5) * width * 2; star.y = (Math.random() - 0.5) * height * 2; }
+                const x = (star.x / star.z) * 100 + cx;
+                const y = (star.y / star.z) * 100 + cy;
+                const size = (1 - star.z / width) * (isHyper ? 3 : 2) * star.sizeBase;
+                ctx.beginPath(); ctx.fillStyle = "#fff";
+                if (isHyper) {
+                    const xPrev = (star.x / (star.z + speed * 15)) * 100 + cx;
+                    const yPrev = (star.y / (star.z + speed * 15)) * 100 + cy;
+                    ctx.strokeStyle = `rgba(200, 240, 255, ${1 - star.z/width})`; ctx.lineWidth = size; ctx.lineCap = 'round';
+                    ctx.moveTo(x, y); ctx.lineTo(xPrev, yPrev); ctx.stroke();
+                } else {
+                    ctx.globalAlpha = 0.8 + Math.random()*0.2; ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1.0;
+                }
+            });
+            ships.forEach(s => s.draw());
+            requestAnimationFrame(drawSpace);
+        }
+
+        window.addEventListener('resize', initSpace);
+        initSpace();
+        drawSpace();
+
+        // --- 2. TRANSITION LOGIC ---
+        function engageHyperspace(targetUrl) {
+            isHyper = true;
+            
+            // Accelerate
+            let speedInterval = setInterval(() => { if(speed < 60) speed *= 1.2; }, 20);
+
+            // Shake
+            document.querySelector('.file-container').classList.add('hyperspace-shake');
+            document.body.classList.add('hyperspace-shake');
+            
+            // Flash
+            const overlay = document.getElementById('hyperspace-overlay');
+            setTimeout(() => { overlay.style.opacity = '1'; }, 1000);
+
+            // Navigate
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1400);
+        }
+
+        // --- 3. POST CONTENT LOGIC ---
+        const posts = [
+            {
+                id: 1,
+                title: "CompTIA Sec+ Writeup",
+                date: "18 August 2024",
+                category: "Certifications",
+                content: `
+                    <p><strong>Mission Brief:</strong> In this writeup I will cover my expeirence with the SEC+ certification. It took around 3 weeks of study and I passed with a score of 789!</p>
+                    <br>
+                    <h3>Week 1</h3>
+                    <p>I was reccomened this certification by a friend, I have always been really interested in cyber security and now that I am in university there is a real emphasis on becoming 'employable', so here I am ready to tackle this cert. I began my study using Professer Messer's youtube playlist </p>  
+                    <img src="assets/ProfesserMesser.jpg" alt="SEC+ Logo"> 
+                    <a href="https://youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv&si=7v7w6Hq2wWnzZMXI" style="color:#4ecdc4"> SEC+ Playlist</a>
+                    <p>A great tip is to watch in 2x speed, most of the content you likely already know!</p>
+                    <br>
+                    <h3>Week 2</h3>
+                    <p>I done... Practice exams, these are lit the easiest and fastest way to pass. I used both dions and professer messers. Dions are great for the amount of questions you get. BUT messers are farrr closer to the exam. </p>
+                    <p>I took both of these exams twice and was consistently getting 80s and 90s which apparently is the best you can hope for ;)</p>
+                    <br>
+                    <h3>Taking the exam</h3>
+                    <p>I finished in 40 mins, becuase it is multiple choice I feel like you get a feel for the exam and know whether you have passed or not. Thankfully I feel like I done well and got a great passing score in my books :D </p>
+                    <p>Voila pls see the attached :<)</p>
+                    <div class="pdf-viewer" style="margin-top:18px;">
+                        <iframe src="assets/CompTIASecurity.pdf" width="100%" height="640" style="border:0; background:#fff;" title="CompTIA Security+ Certificate"></iframe>
+                        <p style="margin-top:10px;color:#95e1d3;">
+                            If the certificate doesn't display, <a href="assets/CompTIASecurity.pdf" target="_blank" rel="noopener" style="color:var(--accent-cyan);">open or download it here</a>.
+                        </p>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                title: "CompTIA CySA+ Writeup",
+                date: "15 October 2024",
+                category: "Certifications",
+                content: `
+                    <p><strong>Mission Brief:</strong> Leveling up from Sec+. The Cybersecurity Analyst (CySA+) focuses on the "Blue Team" side of operations: threat hunting, log analysis, and incident response.</p>
+                    
+                    <p>To visualize where this sits in the hierarchy, it is the direct intermediate step after Security+ and before the advanced CASP+.</p>
+                    
+                    <br>
+                    <h3>The Strategy</h3>
+                    <p>Unlike Sec+, which is a mile wide and an inch deep, CySA+ requires you to actually <em>read</em> the data. You can't just memorize definitions; you have to interpret logs. I used the <strong>Sybex Study Guide (Mike Chapple)</strong> and <strong>Jason Dion's Udemy course</strong>.</p>
+                    
+                    <p>My core focus was on the four main domains:</p>
+                    <ul>
+                        <li>Threat and Vulnerability Management</li>
+                        <li>Software and Systems Security</li>
+                        <li>Security Operations and Monitoring</li>
+                        <li>Incident Response</li>
+                    </ul>
+
+                    <h3>The Practical Grind</h3>
+                    <p>The hardest part of this exam involves the Performance Based Questions (PBQs). You need to be comfortable looking at raw logs from tools like Nmap, Wireshark, and Syslog to identify indicators of compromise (IoC).</p>
+                    
+                    <p>I spent about 2 weeks purely looking at firewall logs and SIEM dashboards to understand what a "normal" baseline looks like versus an active attack.</p>
+
+                    <br>
+                    <h3>Exam Day</h3>
+                    <p>This was tougher than Sec+. I had 4 PBQs right at the start involving firewall ACL configurations and identifying a SQL injection from server logs. I finished with about 10 minutes to spare.</p>
+                    
+                    <p><strong>Result:</strong> Passed with a 765! (Passing is 750). It was close, but a pass is a pass. Blue Team certified.</p>
+                    
+                    <div class="pdf-viewer" style="margin-top:18px;">
+                        <iframe src="assets/CompTIACySA.pdf" width="100%" height="640" style="border:0; background:#fff;" title="CompTIA CySA+ Certificate"></iframe>
+                        <p style="margin-top:10px;color:#95e1d3;">
+                            If the certificate doesn't display, <a href="assets/CompTIACySA.pdf" target="_blank" rel="noopener" style="color:var(--accent-cyan);">open or download it here</a>.
+                        </p>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                title: "LetsDefend - SOC165 - SQL Injection Payload Detected",
+                date: "04 June 2025",
+                category: "LetsDefend",
+                content: `<h3>Getting our bearings</h3>
+                 <p>Firstly have a look at the information for the alert:</p>
+                 
+                 <img src="assets/LetsDefend.jpg" alt="LetsDefend Alert Screenshot">
+                 
+                 <p>The main points of interest here are:</p>
+                    <ul>
+                        <li><strong>Source IP: 167.99.169.17</strong></li>
+                        <li><strong>Destination IP: 172.16.17.18 </strong></li>
+                        <li>Host Name: WebServer1001 </li>
+                        <li>Requested URL: https://172.16.17.18/search/?q=%22%20OR%201%20%3D%201%20--%20--%20</li>
+                    </ul>
+
+                    <p>The Requested URL is encoded using URL encoding. Decoding it using CyberChef gives us:</p>
+                    <pre><code>" OR 1 = 1 -- -- </code></pre>
+                    <p>This is a classic SQL injection payload; the attacker is trying to manipulate the SQL query to return true (1=1).</p>
+
+                    <h3>Investigating the Source IP</h3>
+                    <p>Next we want to investigate the source IP 167.99.169.17.</p>
+                    <p>We can put the source IP into VirusTotal and we get the following results:</p>
+                    
+                    <img src="assets/VirusTotal.jpg" alt="VirusTotal Screenshot">
+                    
+                    <p>We can see that this IP has been involved in malicious activity before, with 5 detections.</p>
+
+                    <h3>Checking the host for compromise</h3>
+                    <p>Putting the hostname <strong>WebServer1001</strong> into endpoint security, we find there has been no commands executed on the machine, so it hasn't been rooted for now :)</p>
+
+                    <h3>Checking the logs</h3>
+                    <p>We now want to check the source IP to find if the command was successful and if any other SQL injection occurred.</p>
+                    <p>Searching for the source IP in the logs we find that there is no change in response sizes, we can assume they did not successfully execute the commands.</p>
+                    
+                    <img src="assets/FinalAlert.jpg" alt="Final Alert Screenshot">
+
+                    <p>We are done Thank you for reading :)</p>
+                `
+            },
+            {
+                id: 4,
+                title: "Iron CTF 2024 Web Recap",
+                date: "05 OCT 2024",
+                category: "IronCTF",
+                content: `<p>Full writeup content for Iron CTF goes here...</p>`
+            }
+        ];
+
+        // 4. Load Content
+        const params = new URLSearchParams(window.location.search);
+        const id = parseInt(params.get('id'));
+        const post = posts.find(p => p.id === id);
+        const container = document.getElementById('fileContainer');
+
+        if (post) {
+            container.innerHTML = `
+                <div class="stamp">DECRYPTED</div>
+                <div class="file-header">
+                    <h1>${post.title}</h1>
+                    <div class="meta-info">LOG DATE: ${post.date} | CLASS: ${post.category}</div>
+                </div>
+                <div class="content">
+                    ${post.content}
+                </div>
+            `;
+        } else {
+            container.innerHTML = `<h1>404: DATA_CORRUPTED</h1><p>The requested file could not be retrieved from the archives.</p>`;
+        }
+    </script>
+</body>
+</html>

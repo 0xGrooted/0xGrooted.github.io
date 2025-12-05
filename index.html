@@ -3,509 +3,862 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberSec Writeups | Personal Blog</title>
-    <!-- Tailwind CSS for layout -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>0xgrooted | Rebel Data Uplink</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'hacker-green': '#76b900', // The signature green
-                        'hacker-dark': '#0f0f0f',
-                        'hacker-card': '#1a1a1a',
-                        'hacker-text': '#e0e0e0',
-                        'hacker-gray': '#888888'
-                    },
-                    fontFamily: {
-                        sans: ['"Roboto"', 'sans-serif'],
-                        mono: ['"Fira Code"', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f0f0f; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #333; 
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #76b900; 
+        :root {
+            --bg-deep: #000000;
+            /* Slightly darker glass for inside the cockpit */
+            --glass-panel: rgba(5, 10, 15, 0.9); 
+            --glass-border: rgba(0, 234, 255, 0.5);
+            --gui-metal: #1a1a1a;
+            
+            /* Star Wars Palette */
+            --rebel-red: #ff3e3e;     
+            --saber-blue: #00eaff;    
+            --saber-green: #39ff14;   
+            --crawl-yellow: #ffe81f;  
+            
+            --font-pixel: 'VT323', monospace;
+            --font-tech: 'Share Tech Mono', monospace; 
         }
 
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            cursor: crosshair; scrollbar-width: thin; scrollbar-color: var(--saber-blue) var(--gui-metal);
+        }
+
+        /* --- GLOBAL CRT & ATMOSPHERE --- */
         body {
-            background-color: #0f0f0f;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--saber-blue); 
+            font-family: var(--font-tech);
+            line-height: 1.6; 
+            overflow-x: hidden; 
+            min-height: 100vh;
+            /* Center the cockpit frame */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
         }
 
-        .hover-underline-animation {
-            display: inline-block;
-            position: relative;
+        #starfield {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at bottom center, #000510, #000000);
         }
 
-        .hover-underline-animation::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            transform: scaleX(0);
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #76b900;
-            transform-origin: bottom right;
-            transition: transform 0.25s ease-out;
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 3px, 3px 100%; 
+            z-index: 9998; pointer-events: none; opacity: 0.4;
+        }
+        
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.9) 100%);
+            z-index: 9997; pointer-events: none;
         }
 
-        .hover-underline-animation:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-
-        /* Card Hover Effects */
-        .article-card:hover h2 {
-            color: #76b900;
-            transition: color 0.2s;
-        }
-        .article-card:hover img {
-            opacity: 0.9;
+        #hyperspace-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; opacity: 0; pointer-events: none; z-index: 10000;
             transition: opacity 0.2s;
         }
 
-        /* Utility for hiding elements via JS */
-        .hidden-post {
-            display: none !important;
+        /* --- NEW SHIP GUI FRAME --- */
+        .cockpit-frame {
+            position: relative;
+            width: 95%;
+            max-width: 1250px;
+            min-height: 90vh;
+            z-index: 10;
+            /* The Complex Cockpit Shape */
+            clip-path: polygon(
+                50px 0, calc(100% - 50px) 0, 
+                100% 50px, 100% calc(100% - 50px), 
+                calc(100% - 50px) 100%, 50px 100%, 
+                0 calc(100% - 50px), 0 50px
+            );
+            background: var(--gui-metal);
+            padding: 5px; /* Thickness of the outer metal frame */
+            box-shadow: 0 0 30px rgba(0, 234, 255, 0.2);
+            opacity: 0; animation: screenTurnOn 1s ease-out 0.5s forwards;
+        }
+
+        /* The glowing energy border inside the metal frame */
+        .cockpit-frame::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, var(--saber-blue), transparent 20%, transparent 80%, var(--saber-blue)),
+                        linear-gradient(-45deg, var(--saber-blue), transparent 20%, transparent 80%, var(--saber-blue));
+            z-index: -1;
+            clip-path: inherit;
+            opacity: 0.5;
+        }
+
+        /* The inner Screen area holding content */
+        .cockpit-screen {
+            background: var(--glass-panel);
+            height: 100%;
+            /* Matching inner clip path */
+            clip-path: polygon(
+                48px 2px, calc(100% - 48px) 2px, 
+                calc(100% - 2px) 48px, calc(100% - 2px) calc(100% - 48px), 
+                calc(100% - 48px) calc(100% - 2px), 48px calc(100% - 2px), 
+                2px calc(100% - 48px), 2px 48px
+            );
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
         }
         
-        .nav-link {
+        /* Tactical Grid overlay on the screen */
+        .cockpit-screen::after {
+             content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+             background-image: 
+                linear-gradient(rgba(0, 234, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 234, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none; z-index: 0;
+            opacity: 0.3;
+        }
+
+        .container {
+            position: relative; z-index: 2;
+            padding: 60px 40px 40px 40px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* --- HUD ELEMENTS (Heads Up Display) --- */
+        .hud-bar {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            width: 60%; height: 30px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--saber-blue);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+            font-family: var(--font-pixel);
+            color: var(--saber-green);
+            z-index: 20;
+        }
+        .hud-top { top: 10px; border-bottom: none; border-radius: 0 0 10px 10px; }
+        .hud-bottom { bottom: 10px; border-top: none; border-radius: 10px 10px 0 0;}
+        
+        .blink-light {
+            width: 10px; height: 10px; border-radius: 50%; background: var(--rebel-red);
+            box-shadow: 0 0 10px var(--rebel-red);
+            animation: blink 1s infinite alternate;
+        }
+        .blink-light.blue { background: var(--saber-blue); box-shadow: 0 0 10px var(--saber-blue); animation-duration: 2s; }
+        @keyframes blink { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+
+        .scrolling-text {
+            overflow: hidden; white-space: nowrap; width: 200px; font-size: 0.8em; opacity: 0.7;
+        }
+        .scrolling-text span {
+            display: inline-block; padding-left: 100%;
+            animation: scroll 15s linear infinite;
+        }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        /* Corners decorations */
+        .gui-corner {
+            position: absolute; width: 60px; height: 60px;
+            border: 3px solid var(--saber-blue); z-index: 20;
+            opacity: 0.7;
+        }
+        .gc-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .gc-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+        .gc-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+        .gc-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+
+        @keyframes screenTurnOn {
+            0% { opacity: 0; transform: scale(0.95); filter: brightness(0); }
+            20% { opacity: 1; transform: scale(0.95); filter: brightness(5); }
+            100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+        }
+
+        /* --- Header --- */
+        header { text-align: center; margin-bottom: 40px; }
+
+        .title-wrapper {
+            display: flex; justify-content: center; align-items: center;
+            height: 150px; perspective: 500px; margin-bottom: 10px;
+        }
+
+        .main-title {
+            color: var(--crawl-yellow); font-family: var(--font-pixel);
+            font-size: 6em; font-weight: bold; text-align: center;
+            line-height: 0.9; 
+            text-shadow: 0 0 10px rgba(255, 232, 31, 0.6), 2px 2px 0px rgba(255,0,0,0.5), -2px -2px 0px rgba(0,0,255,0.5);
+            animation: glitchTitle 3s infinite;
+        }
+
+        @keyframes glitchTitle {
+            0% { text-shadow: 2px 0 rgba(255,0,0,0.5), -2px 0 rgba(0,0,255,0.5); }
+            95% { text-shadow: 2px 0 rgba(255,0,0,0.5), -2px 0 rgba(0,0,255,0.5); }
+            96% { text-shadow: -3px 0 rgba(255,0,0,0.5), 3px 0 rgba(0,0,255,0.5); transform: skewX(5deg); }
+            97% { text-shadow: 0 0 rgba(0,0,0,0); transform: skewX(0); }
+            98% { text-shadow: 2px 0 rgba(255,0,0,0.5), -2px 0 rgba(0,0,255,0.5); }
+        }
+
+        .subtitle {
+            color: var(--rebel-red); font-size: 1.5em; letter-spacing: 4px;
+            text-transform: uppercase; text-shadow: 0 0 10px var(--rebel-red);
+        }
+
+        /* --- TACTICAL HOLO-DECK GRID --- */
+        .holo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            padding: 20px 0;
+            perspective: 1000px;
+        }
+
+        .holo-card {
+            position: relative;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
             cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .holo-card:hover { transform: translateY(-10px) scale(1.02); }
+        
+        /* Base Projector */
+        .projector-base {
+            width: 160px; height: 35px;
+            background: linear-gradient(to bottom, #2a2a2a, #000);
+            border: 2px solid #444; border-bottom: 4px solid #000;
+            border-radius: 50% 50% 10px 10px / 20px 20px 10px 10px;
+            position: absolute; bottom: 0;
+            box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+            z-index: 2;
+        }
+        
+        .projector-light {
+            width: 80px; height: 15px;
+            background: radial-gradient(circle, #fff, var(--saber-blue));
+            border-radius: 50%;
+            position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+            box-shadow: 0 0 20px var(--saber-blue), 0 -10px 30px var(--saber-blue);
+        }
+
+        /* The Beam */
+        .holo-beam {
+            position: absolute; bottom: 30px;
+            width: 180px; height: 280px;
+            background: linear-gradient(to top, rgba(0, 234, 255, 0.15), transparent 80%);
+            clip-path: polygon(25% 100%, 75% 100%, 100% 0, 0 0);
+            z-index: 1; pointer-events: none;
+            opacity: 0.5;
+            animation: beamFlicker 0.1s infinite;
+        }
+
+        @keyframes beamFlicker {
+            0% { opacity: 0.5; }
+            50% { opacity: 0.45; }
+            100% { opacity: 0.55; }
+        }
+
+        /* The Hologram Image */
+        .holo-projection-wrapper {
+            position: relative; z-index: 3; bottom: 60px;
+            width: 200px; height: 200px;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .holo-projection {
+            max-width: 100%; max-height: 100%;
+            object-fit: contain;
+            /* The Hologram Look */
+            filter: sepia(100%) hue-rotate(170deg) saturate(300%) contrast(1.2) drop-shadow(0 0 5px var(--saber-blue));
+            opacity: 0.8; mix-blend-mode: hard-light;
+            animation: holoFloat 4s ease-in-out infinite;
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            transition: 0.3s;
+        }
+        
+        .holo-card:hover .holo-projection {
+            filter: sepia(0%) hue-rotate(0deg) saturate(100%) drop-shadow(0 0 15px var(--saber-blue));
+            opacity: 1;
+        }
+
+        @keyframes holoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Scanline scrolling on image */
+        .holo-projection-wrapper::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0) 50%, rgba(0, 234, 255, 0.1) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        .holo-label {
+            position: absolute; top: 10px; width: 100%; text-align: center;
+            opacity: 0; transition: 0.3s; transform: translateY(20px); z-index: 10;
+        }
+        .holo-card:hover .holo-label { opacity: 1; transform: translateY(0); }
+
+        .holo-title {
+            color: var(--bg-deep); background: var(--saber-blue);
+            font-family: var(--font-pixel); font-size: 1.4em;
+            padding: 2px 10px; box-shadow: 0 0 15px var(--saber-blue);
+            display: inline-block;
+        }
+
+        /* --- Sections --- */
+        .section { display: none; margin-bottom: 60px;}
+        
+        /* --- Controls --- */
+        .controls-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--saber-green); padding-bottom: 10px;}
+        h2 { font-family: var(--font-pixel); font-size: 3em; color: var(--saber-green); text-shadow: 0 0 10px var(--saber-green); }
+        
+        .search-box { 
+            background: rgba(0,0,0,0.5); border: 1px solid var(--saber-green); 
+            padding: 10px 20px; color: var(--saber-green); font-family: var(--font-tech); width: 250px; 
+            text-transform: uppercase; transition: width 0.3s;
+        }
+        .search-box:focus { outline: none; box-shadow: 0 0 15px var(--saber-green); width: 300px; }
+
+        /* --- Menu & Overlay --- */
+        .menu-trigger { 
+            position: fixed; top: 30px; right: 40px; z-index: 200; 
+            background: rgba(0,0,0,0.8); border: 2px solid var(--saber-blue); 
+            color: var(--saber-blue); padding: 10px 20px; cursor: pointer; 
+            font-weight: bold; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+            backdrop-filter: blur(5px); box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+        }
+        .menu-trigger:hover { background: var(--saber-blue); color: #000; box-shadow: 0 0 30px var(--saber-blue); }
+
+        .fullscreen-menu { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); z-index: 300; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
+            backdrop-filter: blur(10px);
+            background-image: radial-gradient(circle at center, rgba(0, 234, 255, 0.1) 0%, transparent 70%);
+        }
+        .fullscreen-menu.open { opacity: 1; pointer-events: all; }
+        
+        .menu-link { 
+            font-family: var(--font-pixel); font-size: 4em; color: #555; 
+            text-decoration: none; text-transform: uppercase; transition: 0.2s; padding: 0 20px; 
+            position: relative;
+        }
+        .menu-link:hover { 
+            color: var(--saber-blue); text-shadow: 0 0 20px var(--saber-blue); 
+            letter-spacing: 5px;
+        }
+        .menu-link::before {
+            content: '>'; opacity: 0; position: absolute; left: -40px; color: var(--rebel-red);
+        }
+        .menu-link:hover::before { opacity: 1; }
+
+        .close-icon { 
+            position: absolute; top: 30px; right: 30px; color: var(--rebel-red); 
+            font-size: 30px; cursor: pointer; border: 2px solid var(--rebel-red); 
+            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; transition: 0.3s;
+        }
+        .close-icon:hover { background: var(--rebel-red); color: black; box-shadow: 0 0 30px var(--rebel-red); }
+
+        /* --- PILOT PROFILE --- */
+        .profile-interface {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            display: grid; grid-template-columns: 300px 1fr;
+            box-shadow: inset 0 0 30px rgba(0, 234, 255, 0.1);
+            position: relative;
+        }
+        .profile-interface::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 1px solid rgba(255,255,255,0.1); pointer-events: none;
+            background: linear-gradient(90deg, transparent 50%, rgba(0, 234, 255, 0.05) 50%);
+            background-size: 4px 4px; z-index: 0;
+        }
+
+        .profile-sidebar {
+            padding: 30px; border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            position: relative; z-index: 2;
+        }
+
+        .pixel-avatar {
+            width: 160px; height: 160px; border: 2px solid var(--saber-green);
+            margin-bottom: 20px; image-rendering: pixelated;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+            background: #000; padding: 5px;
+        }
+
+        .pilot-rank { color: var(--crawl-yellow); font-family: var(--font-pixel); font-size: 2em; margin-bottom: 5px; }
+        .pilot-id { color: var(--saber-blue); font-size: 0.9em; opacity: 0.8; margin-bottom: 20px; letter-spacing: 2px; }
+
+        .profile-content { padding: 40px; position: relative; z-index: 2; }
+        
+        .bio-section { margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .bio-text { font-size: 1.1em; color: #ddd; text-align: justify; }
+
+        .certs-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px; margin-top: 20px;
+        }
+        .cert-badge {
+            background: rgba(0,0,0,0.6); border: 1px solid var(--saber-green); padding: 15px;
+            text-align: center; transition: 0.3s;
+        }
+        .cert-badge:hover { background: var(--saber-green); color: black; box-shadow: 0 0 20px var(--saber-green); }
+        .cert-icon { font-size: 1.5em; display: block; margin-bottom: 5px; }
+
+        /* --- Contact --- */
+        .contact-layout { 
+            background: rgba(0,0,0,0.5); border: 1px solid var(--rebel-red); 
+            padding: 40px; display: flex; gap: 40px; align-items: center; 
+        }
+        .form-control { 
+            background: #000; border: 1px solid #333; color: var(--saber-blue); 
+            width: 100%; padding: 15px; margin-bottom: 15px; font-family: var(--font-tech);
+            transition: 0.3s;
+        }
+        .form-control:focus { border-color: var(--rebel-red); box-shadow: 0 0 10px var(--rebel-red); outline: none; }
+        
+        .access-btn {
+            background: transparent; border: 1px solid var(--rebel-red); color: var(--rebel-red);
+            padding: 15px; width: 100%; font-family: var(--font-pixel); font-size: 1.5em;
+            transition: 0.3s; cursor: pointer;
+        }
+        .access-btn:hover { background: var(--rebel-red); color: black; box-shadow: 0 0 25px var(--rebel-red); }
+
+        /* System Boot Log */
+        .system-log {
+            position: fixed; bottom: 20px; left: 20px; font-size: 10px; color: var(--saber-green);
+            opacity: 0.5; font-family: monospace; pointer-events: none; z-index: 100;
+        }
+
+        /* --- SHAKE ANIMATION FOR HYPERSPACE --- */
+        .hyperspace-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        @media (max-width: 800px) {
+            .main-title { font-size: 4em; }
+            .cockpit-frame { width: 100%; min-height: 100vh; clip-path: none; padding: 0;}
+            .cockpit-screen { clip-path: none; border: none; }
+            .hud-bar, .gui-corner { display: none; } /* Hide complex GUI on mobile for space */
+            .container { padding: 80px 20px 20px 20px; }
+            .menu-trigger { top: 20px; right: 20px; }
+            .profile-interface { grid-template-columns: 1fr; }
+            .profile-sidebar { border-right: none; border-bottom: 1px solid var(--glass-border); }
+            .contact-layout { flex-direction: column; }
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body>
+    
+    <canvas id="starfield"></canvas>
+    
+    <div id="hyperspace-overlay"></div>
 
-    <!-- Navbar -->
-    <nav class="bg-hacker-card border-b border-gray-800 sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <!-- Logo Area -->
-                    <a href="#" onclick="filterCategory('all', document.getElementById('nav-home'))" class="flex-shrink-0 flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-hacker-green text-3xl"></i>
-                        <span class="font-bold text-xl tracking-tighter text-white">CYBER<span class="text-hacker-green">LOGS</span></span>
-                    </a>
-                    
-                    <!-- Desktop Menu -->
-                    <div class="hidden md:ml-10 md:flex md:space-x-8" id="nav-container">
-                        <!-- Note: 'active-nav' class is used by JS to toggle styles -->
-                        <a id="nav-home" onclick="filterCategory('all', this)" class="nav-link border-b-2 border-hacker-green text-white px-1 pt-1 text-sm font-medium transition-colors duration-200">Home</a>
-                        <a id="nav-writeups" onclick="filterCategory('writeup', this)" class="nav-link border-b-2 border-transparent text-gray-300 hover:text-white hover:border-gray-300 px-1 pt-1 text-sm font-medium transition-colors duration-200">Incidents & Writeups</a>
-                        <a id="nav-projects" onclick="filterCategory('project', this)" class="nav-link border-b-2 border-transparent text-gray-300 hover:text-white hover:border-gray-300 px-1 pt-1 text-sm font-medium transition-colors duration-200">Projects</a>
-                        <a id="nav-certs" onclick="filterCategory('certification', this)" class="nav-link border-b-2 border-transparent text-gray-300 hover:text-white hover:border-gray-300 px-1 pt-1 text-sm font-medium transition-colors duration-200">Certifications</a>
-                    </div>
-                </div>
-                
-                <!-- Search Bar -->
-                <div class="flex items-center">
-                    <div class="relative">
-                        <input type="text" id="searchInput" placeholder="Search logs..." class="bg-black border border-gray-700 text-sm rounded-sm focus:ring-hacker-green focus:border-hacker-green block w-48 pl-10 p-1.5 text-white placeholder-gray-500 transition-all focus:w-64">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fa-solid fa-magnifying-glass text-gray-500 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- LEFT COLUMN: Blog Posts (8 cols) -->
-            <div class="lg:col-span-8">
-                
-                <!-- Section Header -->
-                <div class="flex items-center gap-2 mb-6 border-b border-gray-800 pb-2">
-                    <i id="section-icon" class="fa-solid fa-terminal text-hacker-green"></i>
-                    <h2 id="section-title" class="text-lg font-bold uppercase tracking-widest text-white">Latest Intel</h2>
-                </div>
-
-                <!-- Posts Container -->
-                <div id="posts-container" class="space-y-6">
-
-                    <!-- NEW HERO / INTRO SECTION -->
-                    <div class="article-card mb-8 p-8 bg-hacker-card border border-hacker-green rounded-sm shadow-[0_0_10px_rgba(118,185,0,0.1)] flex flex-col md:flex-row items-center gap-8" data-category="hero">
-                        <div class="text-center md:text-left">
-                            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Welcome to <span class="text-hacker-green">CYBERLOGS</span></h1>
-                            <p class="text-xl text-gray-300 mb-4 font-mono border-b border-gray-800 pb-2 inline-block">The Premier Source for Cybersecurity Intel & Analysis</p>
-                            <p class="text-gray-400 mb-6 leading-relaxed text-sm">
-                                Dive into the world of digital security. CYBERLOGS provides in-depth writeups on critical security incidents, detailed CTF solutions, malware analysis, and cutting-edge project showcases. Stay informed and ahead of the curve with our expert insights.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Article: Incident Report -->
-                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="writeup">
-                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1618060932014-4deda4932554?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Incident" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                CRITICAL INCIDENT
-                            </div>
-                        </div>
-                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
-                                    <i class="fa-regular fa-clock"></i> <span>Dec 02, 2023</span>
-                                    <span>|</span>
-                                    <i class="fa-solid fa-triangle-exclamation"></i> <span>Zero-Day</span>
-                                </div>
-                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
-                                    <a href="#" class="hover-underline-animation">Analysis of CVE-2023-XXXX: Remote Code Execution in WebKit</a>
-                                </h2>
-                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
-                                    A deep dive into the recent zero-day vulnerability affecting WebKit browsers. I break down the heap overflow mechanism and demonstrate a PoC exploit in a controlled environment.
-                                </p>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Full Report <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <div class="flex gap-2">
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#exploit</span>
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#zeroday</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Article 1 -->
-                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="writeup">
-                        <!-- Thumbnail -->
-                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cyber Security" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-2 left-2 bg-hacker-green text-black text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                CTF Writeup
-                            </div>
-                        </div>
-                        <!-- Content -->
-                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
-                                    <i class="fa-regular fa-clock"></i> <span>Nov 28, 2023</span>
-                                    <span>|</span>
-                                    <i class="fa-solid fa-layer-group"></i> <span>HackTheBox</span>
-                                </div>
-                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
-                                    <a href="#" class="hover-underline-animation">Breaking Down the 'Eternal' Box: A Kernel Exploitation Journey</a>
-                                </h2>
-                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
-                                    A detailed walkthrough of how I exploited the eternal blue vulnerability, pivoted through the network, and escalated privileges to root using a custom python script.
-                                </p>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Writeup <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <div class="flex gap-2">
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#windows</span>
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#exploit</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Article 2 -->
-                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="writeup">
-                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1563206767-5b1d972eefab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Code Analysis" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                Malware Analysis
-                            </div>
-                        </div>
-                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
-                                    <i class="fa-regular fa-clock"></i> <span>Nov 15, 2023</span>
-                                    <span>|</span>
-                                    <i class="fa-solid fa-bug"></i> <span>Malware</span>
-                                </div>
-                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
-                                    <a href="#" class="hover-underline-animation">Reverse Engineering the New 'DarkStealer' Variant</a>
-                                </h2>
-                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
-                                    De-obfuscating the latest sample of DarkStealer found in phishing campaigns targeting financial institutions. Here is the IoC list and behavior analysis.
-                                </p>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Analysis <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <div class="flex gap-2">
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#reversing</span>
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#malware</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Article 3 -->
-                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="certification">
-                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Certifications" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-2 left-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                Certification
-                            </div>
-                        </div>
-                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
-                                    <i class="fa-regular fa-clock"></i> <span>Oct 30, 2023</span>
-                                    <span>|</span>
-                                    <i class="fa-solid fa-certificate"></i> <span>OSCP</span>
-                                </div>
-                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
-                                    <a href="#" class="hover-underline-animation">My Journey to OSCP: Resources and Tips</a>
-                                </h2>
-                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
-                                    I finally passed the OSCP exam on my first attempt. Here is a breakdown of the resources I used, my study schedule, and the methodology that helped me succeed.
-                                </p>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Story <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <div class="flex gap-2">
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#oscp</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Article 4 (Extra Cert) -->
-                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="certification">
-                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1579621970563-ebec7560eb3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Certifications" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-2 left-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                Certification
-                            </div>
-                        </div>
-                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
-                                    <i class="fa-regular fa-clock"></i> <span>Sep 20, 2023</span>
-                                    <span>|</span>
-                                    <i class="fa-solid fa-shield-cat"></i> <span>CISSP</span>
-                                </div>
-                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
-                                    <a href="#" class="hover-underline-animation">CISSP Exam Review: Is it worth it in 2023?</a>
-                                </h2>
-                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
-                                    A honest review of the Certified Information Systems Security Professional exam. Covering the 8 domains, management perspective, and my study strategy.
-                                </p>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">Read Review <i class="fa-solid fa-arrow-right ml-1"></i></a>
-                                <div class="flex gap-2">
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#cissp</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Article 5 -->
-                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="project">
-                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Project" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                Project
-                            </div>
-                        </div>
-                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
-                                    <i class="fa-regular fa-clock"></i> <span>Sep 12, 2023</span>
-                                    <span>|</span>
-                                    <i class="fa-brands fa-python"></i> <span>Python</span>
-                                </div>
-                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
-                                    <a href="#" class="hover-underline-animation">Building a Port Scanner in Python</a>
-                                </h2>
-                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
-                                    A simple multi-threaded port scanner built from scratch using Python's socket library. Useful for understanding the TCP handshake process.
-                                </p>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">View Code <i class="fa-brands fa-github ml-1"></i></a>
-                                <div class="flex gap-2">
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#coding</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Article 6 (Extra Project) -->
-                    <article class="article-card flex flex-col sm:flex-row bg-hacker-card border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition duration-300 shadow-md" data-category="project">
-                        <div class="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden group">
-                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Project" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-2 left-2 bg-yellow-600 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase">
-                                Tooling
-                            </div>
-                        </div>
-                        <div class="sm:w-2/3 p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center text-xs text-hacker-gray mb-2 gap-2">
-                                    <i class="fa-regular fa-clock"></i> <span>Aug 05, 2023</span>
-                                    <span>|</span>
-                                    <i class="fa-brands fa-golang"></i> <span>GoLang</span>
-                                </div>
-                                <h2 class="text-xl font-bold text-white mb-2 leading-tight article-title">
-                                    <a href="#" class="hover-underline-animation">Subdomain Enumeration Tool in Go</a>
-                                </h2>
-                                <p class="text-gray-400 text-sm line-clamp-2 article-desc">
-                                    A fast and efficient subdomain enumerator I wrote in Go. It utilizes passive sources like crt.sh and VirusTotal to find subdomains without touching the target.
-                                </p>
-                            </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="#" class="text-hacker-green text-sm font-semibold hover:text-white transition">View Code <i class="fa-brands fa-github ml-1"></i></a>
-                                <div class="flex gap-2">
-                                    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">#recon</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                </div>
-            </div>
-
-            <!-- RIGHT COLUMN: Sidebar (4 cols) -->
-            <div class="lg:col-span-4 space-y-8">
-                
-                <!-- About Website Card -->
-                <div class="bg-hacker-card border border-gray-800 p-6 rounded-sm">
-                    <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-                        <i class="fa-solid fa-circle-info text-hacker-green"></i>
-                        <h3 class="font-bold text-white uppercase tracking-wider text-sm">About This Site</h3>
-                    </div>
-                    <div class="text-sm text-gray-400">
-                        <p class="mb-4">
-                            Welcome to <span class="text-white font-bold">CYBER<span class="text-hacker-green">LOGS</span></span>. This is a personal archive dedicated to documenting the ever-evolving landscape of cybersecurity.
-                        </p>
-                        <p class="mb-4">
-                            Here you will find detailed incident reports, technical CTF writeups, malware analysis, and insights into various security projects.
-                        </p>
-                        <p>
-                            The goal is to share knowledge, track personal growth in the field, and contribute to the wider infosec community.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Explore / Categories Sidebar (Restored Navigation) -->
-                <div class="bg-hacker-card border border-gray-800 p-6 rounded-sm">
-                    <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-                        <i class="fa-solid fa-compass text-hacker-green"></i>
-                        <h3 class="font-bold text-white uppercase tracking-wider text-sm">Explore</h3>
-                    </div>
-                    <div class="space-y-3">
-                         <button onclick="filterCategory('writeup', document.getElementById('nav-writeups'))" class="w-full text-left flex items-center justify-between p-3 bg-black border border-gray-800 hover:border-hacker-green rounded transition group">
-                            <span class="font-bold text-gray-300 group-hover:text-white">Incidents & Writeups</span>
-                            <i class="fa-solid fa-bug text-gray-500 group-hover:text-hacker-green"></i>
-                        </button>
-                        <button onclick="filterCategory('project', document.getElementById('nav-projects'))" class="w-full text-left flex items-center justify-between p-3 bg-black border border-gray-800 hover:border-hacker-green rounded transition group">
-                            <span class="font-bold text-gray-300 group-hover:text-white">My Projects</span>
-                            <i class="fa-solid fa-code text-gray-500 group-hover:text-hacker-green"></i>
-                        </button>
-                        <button onclick="filterCategory('certification', document.getElementById('nav-certs'))" class="w-full text-left flex items-center justify-between p-3 bg-black border border-gray-800 hover:border-hacker-green rounded transition group">
-                            <span class="font-bold text-gray-300 group-hover:text-white">Certifications</span>
-                            <i class="fa-solid fa-certificate text-gray-500 group-hover:text-hacker-green"></i>
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    <div class="system-log" id="systemLog">
+        > SYSTEM BOOT...<br>
+        > COCKPIT UI: ONLINE<br>
+        > TARGETING: ACTIVE
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-black border-t border-gray-800 py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-gray-500 text-sm">© 2023 CyberSec Logs. All rights reserved.</p>
-            <div class="mt-4 flex justify-center space-x-6">
-                <a href="#" class="text-gray-600 hover:text-hacker-green">Privacy Policy</a>
-                <a href="#" class="text-gray-600 hover:text-hacker-green">Contact</a>
-                <a href="#" class="text-gray-600 hover:text-hacker-green">RSS Feed</a>
-            </div>
+    <div class="menu-trigger" onclick="toggleMenu()">
+        /// NAV_COMPUTER
+    </div>
+
+    <div class="fullscreen-menu" id="fullscreenMenu">
+        <div class="close-icon" onclick="toggleMenu()">X</div>
+        <div style="text-align:center; display:flex; flex-direction:column; gap:40px;">
+            <a href="#" class="menu-link" onclick="engageHyperspace('home')">Mission Logs</a>
+            <a href="#" class="menu-link" onclick="engageHyperspace('about')">Pilot Data</a>
+            <a href="#" class="menu-link" onclick="engageHyperspace('contact')">Subspace Comms</a>
+            <a href="https://github.com/0xgrooted" target="_blank" class="menu-link">Github Uplink</a>
         </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script>
-        
-        // Category Filter Function
-        function filterCategory(category, navElement) {
-            // Restore Hero if it was hidden by trending
-            const hero = document.querySelector('[data-category="hero"]');
-            if(hero) hero.style.display = 'flex';
+    </div>
+    
+    <div class="cockpit-frame">
+        <div class="cockpit-screen">
             
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.classList.remove('border-hacker-green', 'text-white');
-                link.classList.add('border-transparent', 'text-gray-300', 'hover:text-white', 'hover:border-gray-300');
-            });
-            if(navElement) {
-                navElement.classList.remove('border-transparent', 'text-gray-300', 'hover:text-white', 'hover:border-gray-300');
-                navElement.classList.add('border-hacker-green', 'text-white');
-            }
-            const titleElement = document.getElementById('section-title');
-            const iconElement = document.getElementById('section-icon');
-            switch(category) {
-                case 'all': titleElement.innerText = 'Latest Intel'; iconElement.className = 'fa-solid fa-terminal text-hacker-green'; break;
-                case 'writeup': titleElement.innerText = 'Security Incidents & Writeups'; iconElement.className = 'fa-solid fa-bug text-hacker-green'; break;
-                case 'project': titleElement.innerText = 'My Projects'; iconElement.className = 'fa-solid fa-code text-hacker-green'; break;
-                case 'certification': titleElement.innerText = 'Certifications & Reviews'; iconElement.className = 'fa-solid fa-certificate text-hacker-green'; break;
-            }
-            const posts = document.querySelectorAll('.article-card');
-            posts.forEach(post => {
-                const postCategory = post.getAttribute('data-category');
-                // Don't mess with Hero display logic here too much, handled separately for "Home"
-                if (postCategory === 'hero') {
-                    if (category === 'all') post.style.display = 'flex';
-                    else post.style.display = 'none';
-                    return;
-                }
+            <div class="hud-bar hud-top">
+                <div class="blink-light"></div>
+                <div class="scrolling-text"><span>SYSTEMS NOMINAL // SHIELDS: 98% // HYPERDRIVE: READY // SCANNING SECTOR...</span></div>
+                <div class="blink-light blue"></div>
+            </div>
+            <div class="hud-bar hud-bottom">
+                 <div style="font-size: 0.8em;">SPEED: 12 MGLT</div>
+                 <div style="font-size: 0.8em;">COORDINATES: 14.55.22</div>
+            </div>
+            <div class="gui-corner gc-tl"></div>
+            <div class="gui-corner gc-tr"></div>
+            <div class="gui-corner gc-bl"></div>
+            <div class="gui-corner gc-br"></div>
 
-                if (category === 'all' || postCategory === category) {
-                    post.style.display = 'flex';
-                } else {
-                    post.style.display = 'none';
-                }
-            });
-            document.getElementById('searchInput').value = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            <div class="container" id="mainContainer">
+                <header id="home">
+                    <div class="title-wrapper">
+                        <div class="main-title">
+                            0xGROOTED<br>CYBER-JUNKIE
+                        </div>
+                    </div>
+                    <p class="subtitle">RED LEADER // CYBER-WARFARE DIVISION</p>
+                </header>
+
+                <div id="home-section" class="section active-view" style="display:block;">
+                    <div class="controls-section">
+                        <h2>>> TACTICAL_READOUTS</h2>
+                        <input type="text" class="search-box" id="searchBox" placeholder="SCAN_DATABASE...">
+                    </div>
+
+                    <div class="holo-grid" id="holoGrid">
+                        </div>
+                    
+                    <div id="noResults" style="display: none; text-align: center; color: #888; padding: 40px;">
+                        > DATA CORRUPTED. NO HOLOGRAMS FOUND.
+                    </div>
+                </div>
+
+                <div id="about-section" class="section">
+                    <h2>>> PILOT_DOSSIER</h2>
+                    
+                    <div class="profile-interface">
+                        <div class="profile-sidebar">
+                            <img src="assets/pilot_avatar.png" class="pixel-avatar" onerror="this.src='https://via.placeholder.com/160/000000/39ff14?text=PILOT_IMG'" alt="Pilot">
+                            <div class="pilot-rank">CMDR. GROOTED</div>
+                            <div class="pilot-id">ID: 8824-TK-421</div>
+                            <div style="margin-top:20px; color:var(--saber-green); border:2px solid var(--saber-green); padding:5px 10px; font-size:0.8em; background:rgba(57, 255, 20, 0.1);">STATUS: ACTIVE</div>
+                        </div>
+
+                        <div class="profile-content">
+                            <div class="bio-section">
+                                <h3 style="color:var(--crawl-yellow); font-family:var(--font-pixel); margin-bottom:15px; font-size: 1.5em;">MISSION_PROFILE</h3>
+                                <p class="bio-text">
+                                    "Security Researcher by day, Rebellion Hacker by night. Specializing in dismantling Empire firewalls, auditing smart contracts for the Outer Rim banking clan, and capturing flags across the galaxy."
+                                </p>
+                            </div>
+
+                            <div style="margin-bottom: 30px;">
+                                <h3 style="color:var(--saber-green); font-family:var(--font-pixel); margin-bottom: 15px; font-size: 1.5em;">
+                                    >> CERTIFIED_SKILLS
+                                </h3>
+                                <div class="certs-grid">
+                                    <div class="cert-badge">
+                                        <span class="cert-icon">🛡️</span>
+                                        <div class="cert-name">Sec+</div>
+                                    </div>
+                                    <div class="cert-badge">
+                                        <span class="cert-icon">👁️</span>
+                                        <div class="cert-name">CySA+</div>
+                                    </div>
+                                    <div class="cert-badge">
+                                        <span class="cert-icon">🖥️</span>
+                                        <div class="cert-name">A+</div>
+                                    </div>
+                                    <div class="cert-badge">
+                                        <span class="cert-icon">🎓</span>
+                                        <div class="cert-name">SOC L1</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="contact-section" class="section">
+                    <h2>>> SECURE_CHANNEL</h2>
+                    <div class="contact-layout">
+                        <div style="text-align:center;">
+                        <div style="font-size:5em; color:var(--rebel-red); text-shadow: 0 0 20px var(--rebel-red);">📡</div>
+                        <p style="color:var(--rebel-red); font-family:var(--font-pixel); font-size: 1.2em; margin-top: 10px;">ENCRYPTION ENABLED</p>
+                        </div>
+                        <form class="contact-form" style="flex-grow:1;" onsubmit="event.preventDefault(); alert('Transmission uplink established. Message sent to the Fleet.');">
+                            <input type="text" class="form-control" placeholder="IDENTIFY YOURSELF" required>
+                            <input type="email" class="form-control" placeholder="COMM FREQUENCY (EMAIL)" required>
+                            <textarea class="form-control" rows="5" placeholder="ENCRYPTED MESSAGE..." required></textarea>
+                            <button type="submit" class="access-btn">SEND TRANSMISSION</button>
+                        </form>
+                    </div>
+                </div>
+
+                <footer style="margin-top: 50px; text-align: center; color: #555; font-size: 0.8em; border-top: 1px solid #333; padding-top: 20px; padding-bottom: 20px;">
+                    <p>TRANSMITTED FROM YAVIN 4 // © 2025</p>
+                </footer>
+            </div> 
+            </div>
+         </div>
+    <script>
+        // --- 1. ADVANCED SPACE BACKGROUND ENGINE ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height, cx, cy;
+        let stars = [];
+        let planets = [];
+        let ships = [];
+        
+        // Warp factors
+        let baseSpeed = 0.2;
+        let speed = baseSpeed;
+        let isHyper = false;
+
+        // --- ASSET CLASSES (Procedural Generation) ---
+
+        class Planet {
+            constructor() {
+                this.reset();
+                this.z = Math.random() * width * 2;
+            }
+            reset() {
+                this.x = (Math.random() - 0.5) * width * 3; 
+                this.y = (Math.random() - 0.5) * height * 3;
+                this.z = width * 3; 
+                this.radius = 50 + Math.random() * 150; 
+                const colors = [
+                    ['#1a2a6c', '#b21f1f', '#fdbb2d'], 
+                    ['#23074d', '#cc5333'], 
+                    ['#0f2027', '#203a43', '#2c5364'], 
+                    ['#3a1c71', '#d76d77', '#ffaf7b'] 
+                ];
+                this.colorPalette = colors[Math.floor(Math.random() * colors.length)];
+            }
+            draw() {
+                this.z -= speed * 0.1; 
+                if(this.z <= 0) this.reset();
+
+                const scale = width / this.z;
+                const x2d = (this.x * scale) + cx;
+                const y2d = (this.y * scale) + cy;
+                const r2d = this.radius * scale;
+
+                const opacity = isHyper ? Math.max(0, 1 - (speed * 2)) : Math.min(1, this.z / width);
+                if (opacity <= 0 || r2d < 1) return;
+
+                ctx.globalAlpha = opacity;
+                const grad = ctx.createRadialGradient(x2d - r2d/3, y2d - r2d/3, r2d/10, x2d, y2d, r2d);
+                this.colorPalette.forEach((col, index) => {
+                    grad.addColorStop(index / (this.colorPalette.length - 1), col);
+                });
+                grad.addColorStop(1, 'rgba(0,0,0,0.8)');
+
+                ctx.beginPath();
+                ctx.fillStyle = grad;
+                ctx.arc(x2d, y2d, r2d, 0, Math.PI*2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
         }
 
-        document.getElementById('searchInput').addEventListener('keyup', function(e) {
-            const searchText = e.target.value.toLowerCase();
-            const posts = document.querySelectorAll('.article-card');
-            posts.forEach(post => {
-                const titleElement = post.querySelector('.article-title');
-                const descElement = post.querySelector('.article-desc');
+        class Ship {
+            constructor() {
+               this.reset(true);
+            }
+            reset(initial = false) {
+                const side = Math.floor(Math.random() * 4);
+                if(side === 0) { this.x = -50; this.y = Math.random() * height; } 
+                else if(side === 1) { this.x = width + 50; this.y = Math.random() * height; } 
+                else { this.x = Math.random() * width; this.y = Math.random() * height; }
+
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.size = 2 + Math.random() * 3;
+                this.color = Math.random() > 0.5 ? 'var(--saber-blue)' : 'var(--rebel-red)';
                 
-                // Ensure we don't try to read properties of hidden/hero items unexpectedly
-                if(titleElement && descElement) {
-                     const title = titleElement.innerText.toLowerCase();
-                     const description = descElement.innerText.toLowerCase();
-                     if (title.includes(searchText) || description.includes(searchText)) {
-                         post.style.display = 'flex';
-                     } else {
-                         post.style.display = 'none';
-                     }
+                if(initial) {
+                     this.x = Math.random() * width;
+                     this.y = Math.random() * height;
+                }
+            }
+            draw() {
+                this.x += this.vx * (isHyper ? 5 : 1);
+                this.y += this.vy * (isHyper ? 5 : 1);
+
+                if(this.x < -100 || this.x > width + 100 || this.y < -100 || this.y > height + 100) {
+                    this.reset();
+                }
+
+                const opacity = isHyper ? Math.max(0, 1 - speed) : 1;
+                if(opacity <= 0) return;
+
+                ctx.globalAlpha = opacity;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fillStyle = "#fff";
+                ctx.beginPath();
+                ctx.ellipse(this.x, this.y, this.size * 1.5, this.size/2, Math.atan2(this.vy, this.vx), 0, Math.PI*2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function initSpace() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            cx = width / 2; cy = height / 2;
+            stars = []; planets = []; ships = [];
+            
+            for (let i = 0; i < 500; i++) {
+                stars.push({
+                    x: (Math.random() - 0.5) * width * 2,
+                    y: (Math.random() - 0.5) * height * 2,
+                    z: Math.random() * width,
+                    sizeBase: Math.random()
+                });
+            }
+            for(let i=0; i<3; i++) planets.push(new Planet());
+            for(let i=0; i<8; i++) ships.push(new Ship());
+        }
+
+        function drawSpace() {
+            ctx.fillStyle = isHyper ? "rgba(0,5,16,0.4)" : "rgba(0,5,16,1)";
+            ctx.fillRect(0, 0, width, height);
+            
+            planets.forEach(p => p.draw());
+            
+            stars.forEach(star => {
+                star.z -= speed;
+                if (star.z <= 0) {
+                    star.z = width;
+                    star.x = (Math.random() - 0.5) * width * 2;
+                    star.y = (Math.random() - 0.5) * height * 2;
+                }
+                const x = (star.x / star.z) * 100 + cx;
+                const y = (star.y / star.z) * 100 + cy;
+                const size = (1 - star.z / width) * (isHyper ? 3 : 2) * star.sizeBase;
+                
+                ctx.beginPath();
+                ctx.fillStyle = "#fff";
+                if (isHyper) {
+                    // Warp streaks
+                    const xPrev = (star.x / (star.z + speed * 15)) * 100 + cx;
+                    const yPrev = (star.y / (star.z + speed * 15)) * 100 + cy;
+                    ctx.strokeStyle = `rgba(200, 240, 255, ${1 - star.z/width})`;
+                    ctx.lineWidth = size;
+                    ctx.lineCap = 'round';
+                    ctx.moveTo(x, y); ctx.lineTo(xPrev, yPrev); ctx.stroke();
+                } else {
+                    ctx.globalAlpha = 0.8 + Math.random()*0.2; 
+                    ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill();
+                    ctx.globalAlpha = 1.0;
                 }
             });
+
+            ships.forEach(s => s.draw());
+
+            requestAnimationFrame(drawSpace);
+        }
+
+        window.addEventListener('resize', initSpace);
+        initSpace();
+        drawSpace();
+
+        // --- 2. HYPERSPACE TRANSITION LOGIC ---
+        function engageHyperspace(targetId, isExternalUrl = false) {
+            document.getElementById('fullscreenMenu').classList.remove('open');
+            isHyper = true;
+            let speedInterval = setInterval(() => {
+                if(speed < 60) speed *= 1.2; 
+            }, 20);
+
+            // Shake the whole cockpit frame instead of body
+            document.querySelector('.cockpit-frame').classList.add('hyperspace-shake');
+            const overlay = document.getElementById('hyperspace-overlay');
+            setTimeout(() => { overlay.style.opacity = '1'; }, 1000);
+
+            setTimeout(() => {
+                if(isExternalUrl) { window.location.href = targetId; return; }
+
+                document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
+                document.getElementById('home').style.display = (targetId === 'home') ? 'block' : 'none';
+                if(targetId !== 'home') {
+                    document.getElementById(targetId + '-section').style.display = 'block';
+                } else {
+                     document.getElementById('home-section').style.display = 'block';
+                }
+                // Scroll the container back to top
+                document.getElementById('mainContainer').scrollTo(0,0);
+            }, 1400);
+
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                document.querySelector('.cockpit-frame').classList.remove('hyperspace-shake');
+                clearInterval(speedInterval);
+                let slowDown = setInterval(() => {
+                    if(speed > baseSpeed) { speed *= 0.8; } 
+                    else { speed = baseSpeed; isHyper = false; clearInterval(slowDown); }
+                }, 20);
+            }, 1600);
+        }
+
+        // --- 3. MENU & SYSTEM LOGIC ---
+        function toggleMenu() {
+            document.getElementById('fullscreenMenu').classList.toggle('open');
+        }
+
+        setInterval(() => {
+            const logs = ["SCANNING SECTOR...", "ENCRYPTION ROTATED...", "INCOMING TRAFFIC...", "PING: 24ms...", "SHIELD STATUS: OK", "HYPERDRIVE CHARGING..."];
+            const logBox = document.getElementById('systemLog');
+            logBox.innerHTML += `<br>> ${logs[Math.floor(Math.random()*logs.length)]}`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }, 3500);
+
+
+        // --- 4. DATA RENDERING (HOLO-DECK) ---
+        const posts = [
+            { id: 1, title: "CompTIA Security+ Writeup", date: "18 AUG 2024", image: "assets/xwing_fighter-removebg-preview.png", fallback: "🛡️" },
+            { id: 2, title: "CompTIA CYSA+ Writeup", date: "21 NOV 2025", image: "assets/death_star-removebg-preview.png", fallback: "💀" },
+            { id: 3, title: "LetsDefend - SOC165 - SQL Injection Payload Detected", date: "04 June 2025", image: "assets/pilot_helmet-removebg-preview.png", fallback: "🍺" },
+            //{ id: 4, title: "Iron Fleet Recon", date: "05 OCT 2024", image: "assets/holo_base-removebg-preview.png", fallback: "🚢" }
+        ];
+
+        function renderPosts(data) {
+            const gridContainer = document.getElementById('holoGrid');
+            const noResults = document.getElementById('noResults');
+            gridContainer.innerHTML = '';
+            if (data.length === 0) {
+                gridContainer.style.display = 'none'; noResults.style.display = 'block'; return;
+            }
+            gridContainer.style.display = 'grid'; noResults.style.display = 'none';
+            data.forEach((post) => {
+                const card = document.createElement('div');
+                card.className = 'holo-card';
+                card.onclick = () => engageHyperspace(`writeup.html?id=${post.id}`, true);
+                card.innerHTML = `
+                    <div class="holo-label"><div class="holo-title">${post.title}</div><div style="font-size:0.8em; margin-top:5px; color:var(--saber-blue);">// ${post.date} //</div></div>
+                    <div class="holo-projection-wrapper"><img src="${post.image}" class="holo-projection" alt="${post.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><div style="display:none; font-size:80px; filter: drop-shadow(0 0 10px var(--saber-blue)); animation: holoFloat 3s infinite;">${post.fallback}</div></div>
+                    <div class="holo-beam"></div><div class="projector-base"><div class="projector-light"></div></div>
+                `;
+                gridContainer.appendChild(card);
+            });
+        }
+
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            renderPosts(posts.filter(post => post.title.toLowerCase().includes(query)));
         });
+
+        renderPosts(posts);
     </script>
 </body>
 </html>
