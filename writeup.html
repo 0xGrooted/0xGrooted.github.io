@@ -445,69 +445,89 @@
                 date: "09 Dec 2025",
                 category: "Misc",
                 content: `
-                <h3>My Goal</h3>
-                <p>
-                    My overall goal is to build a strong foundation in vulnerability research and eventually earn my first CVE — even if it takes longer than 12 months. 
-                    Throughout the year, I aim to document everything in GitBook: structured notes, research walkthroughs, and conceptual explanations of how vulnerabilities work.
+                <h3>HackTheBox - CodePartTwo</h3>
+                <p>This is a linux machine from hackthebox! Honestly it has it all :) I really enjoyed it. The initial access is fairly easy but for some reason I found the config using the backup super hard. Anyways Please enjoy the read.</p>
+
+                <h3>Initial Access</h3>
+                <p>When we run a scan of the ip address we get back the following:</p>
+                <img src="assets/writeups/CodePartTwo/nmap.png" alt="Nmap Scan"/>
+                <p>So we can see there is a website running and ssh. You can look further into it using the -sV and -sC flags if you want but you won't learn a lot...
+                    <br></br>Next I visited the website, http://10.10.11.82:8000 which allowed me to find; login, sign up and download app. 
                 </p>
+                <img src="assets/writeups/CodePartTwo/website.png" alt="Website"/>
                 <p>
-                    Some goals are ambitious, but as Granda said: “Reach for the stars, and if you miss, you’ll land on the moon.”
+                   After a bit of recon you don't find a lot, creating an account and logging in with your new account does show a programming intereface. But subdomain discovery and files + directories yield no results.
+                   <br />
+                   I think what should highlight out to yourself is the download app button. It is actually functional and when downloaded we can see the following: 
                 </p>
-
-                <h3>My Timeline</h3>
+                <img src="assets/writeups/CodePartTwo/app.png" alt="app"/>
                 <p>
-                    As a 2nd-year Software Engineering student working two jobs, time is limited — but when my Year in Industry begins, I’ll gain hands-on SOC exposure and more consistent evening time. 
-                    I can commit around <b>12 hours per week</b> to this journey.
+                    I think what jumped out to me was the requirements.txt, this allows us to see what is required on the server / host to be able to run the app. When you do check it you will find the following:
                 </p>
+                <img src="assets/writeups/CodePartTwo/req.png" alt="Requirements"/>
+                <p>Looking through the versions we notice js2py which striked me as odd. I done a bit of digging and found a CVE for it here: <a href="https://github.com/Marven11/CVE-2024-28397-js2py-Sandbox-Escape"> github link <a/>
+                    <br></br>
+                    This should then be pasted into here and pls declare your own ip and port :)
+                </p>
+                <img src="assets/writeups/CodePartTwo/ide.png" alt="app"/>
+                
+                <p>
+                    Make sure to run in order to catch the shell:
+                    <code>nc -lvnp 60001</code>
 
-                <h3>12-Month Exploit Development Timeline</h3>
+                    Now that you have caught the shell. We can try and access the user.txt it should be that easy right? 
+                    Unfortunately not... You can transfer linpeas.sh etc but mine did not pick up anything too insane.
+                </p>
+                <h3>User.txt</h3>
+                 <img src="assets/writeups/CodePartTwo/ls.png" alt="LS *"/>
+                <p>
+                    From here we now find a users.db (Note that file users.db will identify the SQL verision and type)
+                    We can then use SQLITE3 and extract the following from the database. 
+                </p>
+                <img src="assets/writeups/CodePartTwo/sql.png" alt="SQL"/>
+                <p>
+                    Cha Ching we find a 2 users marco and app.
+                    Looking at these or using hashid and knowledge you can determine these are MD5 hashes.
 
-                <h4>Months 1–2 — Foundations</h4>
-                <ul>
-                    <li>C, Linux, debugging, and assembly fundamentals</li>
-                    <li>Learn ELF structure, syscalls, and memory layout</li>
-                    <li>Tools: GDB + GEF/Pwndbg, Radare2/Cutter, Ubuntu VM</li>
-                    <li>Resources: CS:APP, Hacking: Art of Exploitation (conceptual), OST Assembly courses</li>
-                </ul>
-
-                <h4>Months 3–4 — Vulnerability Classes & Secure Coding</h4>
-                <ul>
-                    <li>Understand buffer overflows, format strings, UAF (theory + safe labs)</li>
-                    <li>Study mitigations: ASLR, DEP, stack canaries</li>
-                    <li>Intro to fuzzing & analysis</li>
-                    <li>Resources: Art of Software Security Assessment, Seacord Secure Coding</li>
-                </ul>
-
-                <h4>Months 5–6 — Reverse Engineering Foundations</h4>
-                <ul>
-                    <li>Static & dynamic analysis, reading disassembly</li>
-                    <li>Reversing basics using Ghidra or Binary Ninja</li>
-                    <li>Resources: Practical Reverse Engineering, OST RE101</li>
-                </ul>
-
-                <h4>Months 7–8 — Modern Exploit Mitigations (High-Level)</h4>
-                <ul>
-                    <li>Deep understanding of OS protections (ASLR, RELRO, sandboxing)</li>
-                    <li>Patch diffing & vulnerability root-cause analysis</li>
-                    <li>Resources: Project Zero blog, Trail of Bits research</li>
-                </ul>
-
-                <h4>Months 9–10 — Fuzzing & Vulnerability Research Workflow</h4>
-                <ul>
-                    <li>Advanced fuzzing (AFL++, libFuzzer)</li>
-                    <li>Crash triage, ASAN/UBSAN builds</li>
-                    <li>Study CVE writeups to understand research methodologies</li>
-                </ul>
-
-                <h4>Months 11–12 — Specialization & Portfolio Building</h4>
-                <ul>
-                    <li>Choose a track: browser security, kernel security, or embedded/IoT</li>
-                    <li>Create research notes, safe reproductions, and deep dives</li>
-                    <li>Build a public portfolio: writeups, analyses, and tooling</li>
-                </ul>
+                    I will use hashcat to crack marcos as we could not access his home directory earlier :)
+                </p>
+                 <img src="assets/writeups/CodePartTwo/hashcat.png" alt="hashcat"/>
+                 <p>
+                    Boom, marco:sweetangelbabylove
+                    <br />
+                    Let us ssh in and get the user.txt file !
+                </p>
+                <img src="assets/writeups/CodePartTwo/ssh.png" alt="ssh"/>
+                <br />
+                <h3>Root / Priv Escalation</h3>
 
                 <p>
-                    This structured plan keeps progress manageable within 12 hours per week while steadily building toward the long-term goal of contributing to real vulnerability research.
+                    Now from the screenshot above, what should you jump our to you are these backup files. Why did they not jump out to me :( Lord only knows..
+                    Anyways running sudo -l 
+                    we can find we have access to the following:
+                </p>
+                 <img src="assets/writeups/CodePartTwo/sudo.png" alt="sudo"/>
+                <p>
+                    Doing more investigating about what this is, a simple search on google will land you into a github repository which confirms further why this is probably our AV.
+                    <a href="https://github.com/netinvent/npbackup"> github link </a>
+                    <img src="assets/writeups/CodePartTwo/npbackup.png" alt="npbackup"/>
+                    <br />
+
+                    You can analyse the npbackup-cli file which you can run as root if you would like. But it doesn't look too complicate it is just a simple python script.
+                    You honestly learn more when you use the --help flag
+                    <img src="assets/writeups/CodePartTwo/help.png" alt="help"/>
+
+                    And then if we look at the config file we find our attack path.
+                    If we can can make our own config file / change the existing one to include the /root directory. And cha ching.
+
+                    You can use the following commands:
+                    <img src="assets/writeups/CodePartTwo/command.png" alt="command"/>
+
+                    Essentially what we do here is we create our OWN config file with an updated path: /root
+                    That is all, you can copy the exisiting config files content into your new one and update the paths;
+
+                    <br />
+                    It should go paths: /root
                 </p>
 
                 `
